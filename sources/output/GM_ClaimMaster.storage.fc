@@ -1,0 +1,413 @@
+;;
+;; Type: StateInit
+;; TLB: _ code:^cell data:^cell = StateInit
+;;
+
+((cell, cell)) $StateInit$_not_null(tuple v) inline {
+    throw_if(128, null?(v));
+    var (cell vvv'code, cell vvv'data) = __tact_tuple_destroy_2(v);
+    return (vvv'code, vvv'data);
+}
+
+;;
+;; Type: SendParameters
+;; TLB: _ bounce:bool to:address value:int257 mode:int257 body:Maybe ^cell code:Maybe ^cell data:Maybe ^cell = SendParameters
+;;
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body_code_data(int bounce, slice to, int value, int mode, cell body, cell code, cell data) inline {
+    return (bounce, to, value, mode, body, code, data);
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_body(slice to, int value, int mode, cell body) inline {
+    return (true, to, value, mode, body, null(), null());
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_code_data_body(slice to, int value, int mode, cell code, cell data, cell body) inline {
+    return (true, to, value, mode, body, code, data);
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_value_to_mode_body(int value, slice to, int mode, cell body) inline {
+    return (true, to, value, mode, body, null(), null());
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode(slice to, int value, int mode) inline {
+    return (true, to, value, mode, null(), null(), null());
+}
+
+;;
+;; Type: Deploy
+;; Header: 0x946a98b6
+;; TLB: deploy#946a98b6 queryId:uint64 = Deploy
+;;
+
+(slice, ((int))) $Deploy$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 2490013878);
+    var v'queryId = sc_0~load_uint(64);
+    return (sc_0, (v'queryId));
+}
+
+;;
+;; Type: DeployOk
+;; Header: 0xaff90f57
+;; TLB: deploy_ok#aff90f57 queryId:uint64 = DeployOk
+;;
+
+builder $DeployOk$_store(builder build_0, (int) v) inline {
+    var (v'queryId) = v;
+    build_0 = store_uint(build_0, 2952335191, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    return build_0;
+}
+
+cell $DeployOk$_store_cell((int) v) inline {
+    return $DeployOk$_store(begin_cell(), v).end_cell();
+}
+
+((int)) $DeployOk$_constructor_queryId(int queryId) inline {
+    return (queryId);
+}
+
+;;
+;; Type: ChangeOwner
+;; Header: 0x819dbe99
+;; TLB: change_owner#819dbe99 queryId:uint64 newOwner:address = ChangeOwner
+;;
+
+(slice, ((int, slice))) $ChangeOwner$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 2174598809);
+    var v'queryId = sc_0~load_uint(64);
+    var v'newOwner = sc_0~__tact_load_address();
+    return (sc_0, (v'queryId, v'newOwner));
+}
+
+;;
+;; Type: MintChildWithClaim
+;; Header: 0x00000001
+;; TLB: mint_child_with_claim#00000001 user:address referrer:Maybe address = MintChildWithClaim
+;;
+
+builder $MintChildWithClaim$_store(builder build_0, (slice, slice) v) inline {
+    var (v'user, v'referrer) = v;
+    build_0 = store_uint(build_0, 1, 32);
+    build_0 = __tact_store_address(build_0, v'user);
+    build_0 = __tact_store_address_opt(build_0, v'referrer);
+    return build_0;
+}
+
+cell $MintChildWithClaim$_store_cell((slice, slice) v) inline {
+    return $MintChildWithClaim$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((slice, slice))) $MintChildWithClaim$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 1);
+    var v'user = sc_0~__tact_load_address();
+    var v'referrer = sc_0~__tact_load_address_opt();
+    return (sc_0, (v'user, v'referrer));
+}
+
+;;
+;; Type: MintChildNoClaim
+;; Header: 0x00000011
+;; TLB: mint_child_no_claim#00000011 user:address referrer:Maybe address = MintChildNoClaim
+;;
+
+builder $MintChildNoClaim$_store(builder build_0, (slice, slice) v) inline {
+    var (v'user, v'referrer) = v;
+    build_0 = store_uint(build_0, 17, 32);
+    build_0 = __tact_store_address(build_0, v'user);
+    build_0 = __tact_store_address_opt(build_0, v'referrer);
+    return build_0;
+}
+
+cell $MintChildNoClaim$_store_cell((slice, slice) v) inline {
+    return $MintChildNoClaim$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((slice, slice))) $MintChildNoClaim$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 17);
+    var v'user = sc_0~__tact_load_address();
+    var v'referrer = sc_0~__tact_load_address_opt();
+    return (sc_0, (v'user, v'referrer));
+}
+
+;;
+;; Type: Claim
+;; Header: 0x00000002
+;; TLB: claim#00000002 amount:coins boost:coins user:address referrer:Maybe address = Claim
+;;
+
+(slice, ((int, int, slice, slice))) $Claim$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 2);
+    var v'amount = sc_0~load_coins();
+    var v'boost = sc_0~load_coins();
+    var v'user = sc_0~__tact_load_address();
+    var v'referrer = sc_0~__tact_load_address_opt();
+    return (sc_0, (v'amount, v'boost, v'user, v'referrer));
+}
+
+;;
+;; Type: AddReferral
+;; Header: 0x00000003
+;; TLB: add_referral#00000003 from:address to:address = AddReferral
+;;
+
+builder $AddReferral$_store(builder build_0, (slice, slice) v) inline {
+    var (v'from, v'to) = v;
+    build_0 = store_uint(build_0, 3, 32);
+    build_0 = __tact_store_address(build_0, v'from);
+    build_0 = __tact_store_address(build_0, v'to);
+    return build_0;
+}
+
+cell $AddReferral$_store_cell((slice, slice) v) inline {
+    return $AddReferral$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((slice, slice))) $AddReferral$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3);
+    var v'from = sc_0~__tact_load_address();
+    var v'to = sc_0~__tact_load_address();
+    return (sc_0, (v'from, v'to));
+}
+
+((slice, slice)) $AddReferral$_constructor_from_to(slice from, slice to) inline {
+    return (from, to);
+}
+
+;;
+;; Type: Boost
+;; Header: 0x00000005
+;; TLB: boost#00000005 amount:uint32 = Boost
+;;
+
+builder $Boost$_store(builder build_0, (int) v) inline {
+    var (v'amount) = v;
+    build_0 = store_uint(build_0, 5, 32);
+    build_0 = build_0.store_uint(v'amount, 32);
+    return build_0;
+}
+
+cell $Boost$_store_cell((int) v) inline {
+    return $Boost$_store(begin_cell(), v).end_cell();
+}
+
+((int)) $Boost$_constructor_amount(int amount) inline {
+    return (amount);
+}
+
+;;
+;; Type: OwnerWithdrawalRequest
+;; Header: 0x00000006
+;; TLB: owner_withdrawal_request#00000006 amount:coins tokenAddress:address = OwnerWithdrawalRequest
+;;
+
+(slice, ((int, slice))) $OwnerWithdrawalRequest$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 6);
+    var v'amount = sc_0~load_coins();
+    var v'tokenAddress = sc_0~__tact_load_address();
+    return (sc_0, (v'amount, v'tokenAddress));
+}
+
+;;
+;; Type: OwnerWithdrawalTonRequest
+;; Header: 0x00000007
+;; TLB: owner_withdrawal_ton_request#00000007  = OwnerWithdrawalTonRequest
+;;
+
+(slice, (tuple)) $OwnerWithdrawalTonRequest$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 7);
+    return (sc_0, null());
+}
+
+;;
+;; Type: TokenConfig
+;; Header: 0x00000008
+;; TLB: token_config#00000008 tokenAddress:address claimAmount:coins referralReward:coins boostReward:coins = TokenConfig
+;;
+
+(slice, ((slice, int, int, int))) $TokenConfig$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 8);
+    var v'tokenAddress = sc_0~__tact_load_address();
+    var v'claimAmount = sc_0~load_coins();
+    var v'referralReward = sc_0~load_coins();
+    var v'boostReward = sc_0~load_coins();
+    return (sc_0, (v'tokenAddress, v'claimAmount, v'referralReward, v'boostReward));
+}
+
+;;
+;; Type: CustomMessage
+;; Header: 0x00000009
+;; TLB: custom_message#00000009 to:address payload:Maybe ^cell = CustomMessage
+;;
+
+(slice, ((slice, cell))) $CustomMessage$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 9);
+    var v'to = sc_0~__tact_load_address();
+    var v'payload = sc_0~load_int(1) ? sc_0~load_ref() : null();
+    return (sc_0, (v'to, v'payload));
+}
+
+;;
+;; Type: SetCode
+;; Header: 0x00000013
+;; TLB: set_code#00000013 newCode:^cell = SetCode
+;;
+
+(slice, ((cell))) $SetCode$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 19);
+    var v'newCode = sc_0~load_ref();
+    return (sc_0, (v'newCode));
+}
+
+;;
+;; Type: TokenNotification
+;; Header: 0x7362d09c
+;; TLB: token_notification#7362d09c queryId:uint64 amount:coins from:address forwardPayload:remainder<slice> = TokenNotification
+;;
+
+(slice, ((int, int, slice, slice))) $TokenNotification$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 1935855772);
+    var v'queryId = sc_0~load_uint(64);
+    var v'amount = sc_0~load_coins();
+    var v'from = sc_0~__tact_load_address();
+    var v'forwardPayload = sc_0;
+    return (sc_0, (v'queryId, v'amount, v'from, v'forwardPayload));
+}
+
+;;
+;; Type: TokenExcesses
+;; Header: 0xd53276db
+;; TLB: token_excesses#d53276db queryId:uint64 = TokenExcesses
+;;
+
+(slice, ((int))) $TokenExcesses$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3576854235);
+    var v'queryId = sc_0~load_uint(64);
+    return (sc_0, (v'queryId));
+}
+
+;;
+;; Type: TokenTransfer
+;; Header: 0x0f8a7ea5
+;; TLB: token_transfer#0f8a7ea5 queryId:uint64 amount:coins destination:address responseDestination:Maybe address customPayload:Maybe ^cell forwardTonAmount:coins forwardPayload:Maybe ^slice = TokenTransfer
+;;
+
+builder $TokenTransfer$_store(builder build_0, (int, int, slice, slice, cell, int, slice) v) inline_ref {
+    var (v'queryId, v'amount, v'destination, v'responseDestination, v'customPayload, v'forwardTonAmount, v'forwardPayload) = v;
+    build_0 = store_uint(build_0, 260734629, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = build_0.store_coins(v'amount);
+    build_0 = __tact_store_address(build_0, v'destination);
+    build_0 = __tact_store_address_opt(build_0, v'responseDestination);
+    build_0 = ~ null?(v'customPayload) ? build_0.store_int(true, 1).store_ref(v'customPayload) : build_0.store_int(false, 1);
+    build_0 = build_0.store_coins(v'forwardTonAmount);
+    build_0 = ~ null?(v'forwardPayload) ? build_0.store_int(true, 1).store_ref(begin_cell().store_slice(v'forwardPayload).end_cell()) : build_0.store_int(false, 1);
+    return build_0;
+}
+
+cell $TokenTransfer$_store_cell((int, int, slice, slice, cell, int, slice) v) inline {
+    return $TokenTransfer$_store(begin_cell(), v).end_cell();
+}
+
+((int, int, slice, slice, cell, int, slice)) $TokenTransfer$_constructor_queryId_amount_destination_responseDestination_customPayload_forwardTonAmount_forwardPayload(int queryId, int amount, slice destination, slice responseDestination, cell customPayload, int forwardTonAmount, slice forwardPayload) inline {
+    return (queryId, amount, destination, responseDestination, customPayload, forwardTonAmount, forwardPayload);
+}
+
+;;
+;; Type: ClaimChild
+;;
+
+builder $ClaimChild$init$_store(builder build_0, (slice, slice, slice, int) v) inline {
+    var (v'parent, v'user, v'master, v'interval) = v;
+    build_0 = __tact_store_address(build_0, v'parent);
+    build_0 = __tact_store_address(build_0, v'user);
+    build_0 = __tact_store_address(build_0, v'master);
+    var build_1 = begin_cell();
+    build_1 = build_1.store_int(v'interval, 257);
+    build_0 = store_ref(build_0, build_1.end_cell());
+    return build_0;
+}
+
+(cell, cell) $ClaimChild$_init_child(cell sys', slice $parent, slice $user, slice $master, int $interval) inline {
+    slice sc' = sys'.begin_parse();
+    cell source = sc'~load_dict();
+    cell contracts = new_dict();
+    
+    ;; Contract Code: ClaimChild
+    cell mine = __tact_dict_get_code(source, 35122);
+    contracts = __tact_dict_set_code(contracts, 35122, mine);
+    
+    ;; Build cell
+    builder b = begin_cell();
+    b = b.store_ref(begin_cell().store_dict(contracts).end_cell());
+    b = b.store_int(false, 1);
+    b = $ClaimChild$init$_store(b, ($parent, $user, $master, $interval));
+    return (mine, b.end_cell());
+}
+
+;;
+;; Type: ClaimMaster
+;;
+
+builder $ClaimMaster$_store(builder build_0, (int, slice, int, slice, slice, int, int, int, int) v) inline {
+    var (v'queryId, v'tokenAddress, v'interval, v'owner, v'master, v'claimAmount, v'referralReward, v'boostReward, v'test) = v;
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = __tact_store_address_opt(build_0, v'tokenAddress);
+    build_0 = build_0.store_uint(v'interval, 32);
+    build_0 = __tact_store_address(build_0, v'owner);
+    build_0 = __tact_store_address(build_0, v'master);
+    var build_1 = begin_cell();
+    build_1 = build_1.store_int(v'claimAmount, 257);
+    build_1 = build_1.store_int(v'referralReward, 257);
+    build_1 = build_1.store_int(v'boostReward, 257);
+    var build_2 = begin_cell();
+    build_2 = build_2.store_int(v'test, 257);
+    build_1 = store_ref(build_1, build_2.end_cell());
+    build_0 = store_ref(build_0, build_1.end_cell());
+    return build_0;
+}
+
+(slice, ((int, slice, int, slice, slice, int, int, int, int))) $ClaimMaster$_load(slice sc_0) inline {
+    var v'queryId = sc_0~load_uint(64);
+    var v'tokenAddress = sc_0~__tact_load_address_opt();
+    var v'interval = sc_0~load_uint(32);
+    var v'owner = sc_0~__tact_load_address();
+    var v'master = sc_0~__tact_load_address();
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'claimAmount = sc_1~load_int(257);
+    var v'referralReward = sc_1~load_int(257);
+    var v'boostReward = sc_1~load_int(257);
+    slice sc_2 = sc_1~load_ref().begin_parse();
+    var v'test = sc_2~load_int(257);
+    return (sc_0, (v'queryId, v'tokenAddress, v'interval, v'owner, v'master, v'claimAmount, v'referralReward, v'boostReward, v'test));
+}
+
+(slice, ((slice, slice, int))) $ClaimMaster$init$_load(slice sc_0) inline {
+    var v'owner = sc_0~__tact_load_address();
+    var v'master = sc_0~__tact_load_address();
+    var v'interval = sc_0~load_int(257);
+    return (sc_0, (v'owner, v'master, v'interval));
+}
+
+(int, slice, int, slice, slice, int, int, int, int) $ClaimMaster$_contract_load() impure inline_ref {
+    slice $sc = get_data().begin_parse();
+    __tact_context_sys = $sc~load_ref();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$ClaimMaster$_load();
+    } else {
+        ;; Allow only workchain deployments
+        throw_unless(137, my_address().preload_uint(11) == 1024);
+        (slice owner, slice master, int interval) = $sc~$ClaimMaster$init$_load();
+        $sc.end_parse();
+        return $ClaimMaster$_contract_init(owner, master, interval);
+    }
+}
+
+() $ClaimMaster$_contract_store((int, slice, int, slice, slice, int, int, int, int) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_ref(__tact_context_sys);
+    b = b.store_int(true, 1);
+    b = $ClaimMaster$_store(b, v);
+    set_data(b.end_cell());
+}

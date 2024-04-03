@@ -1,19 +1,26 @@
 import * as fs from "fs";
 import * as path from "path";
 import { Address, contractAddress } from "@ton/core";
-import { SampleTactContract } from "./output/sample_SampleTactContract";
+import { ClaimMaster } from "./output/GM_ClaimMaster";
 import { prepareTactDeployment } from "@tact-lang/deployer";
+import { randomInt } from "crypto";
 
 (async () => {
     // Parameters
     let testnet = true;
-    let packageName = "sample_SampleTactContract.pkg";
-    let owner = Address.parse("kQBM7QssP28PhrctDOyd47_zpFfDiQvv5V9iXizNopb1d2LB");
-    let init = await SampleTactContract.init(owner);
+    let packageName = "GM_ClaimMaster.pkg";
+    let owner = Address.parse("UQBi8I_It4oENAaQOS-XSj2JYRJgUUhFvr_daAdkwpo9ALJ2");
+    let master = Address.parse("0QCJ81a9ELPIYJGHxavNe7HVhAx_iojnPev_jmT_2PEgEO7T");;
+    // let vaultAddress = Address.parse("EQDa4VOnTYlLvDJ0gZjNYm5PXfSmmtL6Vs6A_CZEtXCNICq_");
+    // let kingypooladdress = Address.parse("EQDsIxN6kTHNTzkW-KDAFoOd7uK8IV_qhw8wR5NkYH1Gh_SQ");
 
-    // Load required data
+
+    let init = await ClaimMaster.init(master, master, BigInt(60*3));
+
     let address = contractAddress(0, init);
     let data = init.data.toBoc();
+    console.log(init.code.toBoc().toString('base64'));
+    return;
     let pkg = fs.readFileSync(path.resolve(__dirname, "output", packageName));
 
     // Prepareing

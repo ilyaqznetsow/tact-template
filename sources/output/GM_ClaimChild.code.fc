@@ -1,0 +1,302 @@
+#pragma version =0.4.3;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+#include "GM_ClaimChild.headers.fc";
+#include "GM_ClaimChild.stdlib.fc";
+#include "GM_ClaimChild.constants.fc";
+#include "GM_ClaimChild.storage.fc";
+
+;;
+;; Contract ClaimChild functions
+;;
+
+(slice, slice, slice, int, int, int, slice, int, int) $ClaimChild$_contract_init(slice $parent, slice $user, slice $master, int $interval) impure inline_ref {
+    var (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban)) = (null(), null(), null(), null(), 0, 0, null(), 0, false);
+    $self'parent = $parent;
+    $self'owner = $user;
+    $self'master = $master;
+    $self'interval = $interval;
+    return ($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban);
+}
+
+((slice, slice, slice, int, int, int, slice, int, int), int) $ClaimChild$_fun_lastClaimTime((slice, slice, slice, int, int, int, slice, int, int) $self) impure inline {
+    var (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban)) = $self;
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), $self'lastClaimTime);
+}
+
+((slice, slice, slice, int, int, int, slice, int, int), slice) $ClaimChild$_fun_parent((slice, slice, slice, int, int, int, slice, int, int) $self) impure inline {
+    var (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban)) = $self;
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), $self'parent);
+}
+
+((slice, slice, slice, int, int, int, slice, int, int), slice) $ClaimChild$_fun_master((slice, slice, slice, int, int, int, slice, int, int) $self) impure inline {
+    var (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban)) = $self;
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), $self'master);
+}
+
+((slice, slice, slice, int, int, int, slice, int, int), slice) $ClaimChild$_fun_referrer((slice, slice, slice, int, int, int, slice, int, int) $self) impure inline {
+    var (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban)) = $self;
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), $self'referrer);
+}
+
+((slice, slice, slice, int, int, int, slice, int, int), int) $ClaimChild$_fun_interval((slice, slice, slice, int, int, int, slice, int, int) $self) impure inline {
+    var (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban)) = $self;
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), $self'interval);
+}
+
+((slice, slice, slice, int, int, int, slice, int, int), int) $ClaimChild$_fun_referralsCount((slice, slice, slice, int, int, int, slice, int, int) $self) impure inline {
+    var (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban)) = $self;
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), $self'referralsCount);
+}
+
+((slice, slice, slice, int, int, int, slice, int, int), int) $ClaimChild$_fun_ban((slice, slice, slice, int, int, int, slice, int, int) $self) impure inline {
+    var (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban)) = $self;
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), $self'ban);
+}
+
+((slice, slice, slice, int, int, int, slice, int, int), (int, int, int, int)) $ClaimChild$_fun_get_state((slice, slice, slice, int, int, int, slice, int, int) $self) impure inline {
+    var (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban)) = $self;
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), $ChildState$_constructor_interval_lastClaimTime_referralsCount_boost($self'interval, $self'lastClaimTime, $self'referralsCount, $self'boost));
+}
+
+((slice, slice, slice, int, int, int, slice, int, int), slice) $ClaimChild$_fun_owner((slice, slice, slice, int, int, int, slice, int, int) $self) impure inline {
+    var (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban)) = $self;
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), $self'owner);
+}
+
+;;
+;; Receivers of a Contract ClaimChild
+;;
+
+(((slice, slice, slice, int, int, int, slice, int, int)), ()) $ClaimChild$_internal_binary_MintChildNoClaim((slice, slice, slice, int, int, int, slice, int, int) $self, (slice, slice) $msg) impure inline {
+    var ($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban) = $self;
+    var ($msg'user, $msg'referrer) = $msg;
+    throw_unless(666, ( __tact_slice_eq_bits($self'parent, __tact_context_get_sender()) ));
+    $self'referrer = $msg'referrer;
+    if (null?($self'referrer)) {
+        $global_send($SendParameters$_constructor_to_value_mode($self'parent, 0, 64));
+        return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), ());
+    }
+    slice $referrerAddress = $global_contractAddress($ClaimChild$_init_child(__tact_context_sys, $self'parent, __tact_not_null($self'referrer), $self'master, $self'interval));
+    $global_send($SendParameters$_constructor_to_body_value_mode($referrerAddress, $AddReferral$_store_cell($AddReferral$_constructor_from_to($self'owner, __tact_not_null($self'referrer))), 0, 64));
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), ());
+}
+
+(((slice, slice, slice, int, int, int, slice, int, int)), ()) $ClaimChild$_internal_binary_MintChildWithClaim((slice, slice, slice, int, int, int, slice, int, int) $self, (slice, slice) $msg) impure inline {
+    var ($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban) = $self;
+    var ($msg'user, $msg'referrer) = $msg;
+    throw_unless(666, ( __tact_slice_eq_bits($self'parent, __tact_context_get_sender()) ));
+    $self'referrer = $msg'referrer;
+    $self'lastClaimTime = now();
+    $global_send($SendParameters$_constructor_to_body_value_mode($self'parent, $Claim$_store_cell($Claim$_constructor_user_referrer_boost_amount($self'owner, $self'referrer, 0, 0)), 0, 64));
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), ());
+}
+
+(((slice, slice, slice, int, int, int, slice, int, int)), ()) $ClaimChild$_internal_binary_AddReferral((slice, slice, slice, int, int, int, slice, int, int) $self, (slice, slice) $msg) impure inline {
+    var ($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban) = $self;
+    var ($msg'from, $msg'to) = $msg;
+    slice $referralAddress = $global_contractAddress($ClaimChild$_init_child(__tact_context_sys, $self'parent, $msg'from, $self'master, $self'interval));
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    throw_unless(666, ( (( __tact_slice_eq_bits($self'parent, $ctx'sender) )) ? (true) : (( __tact_slice_eq_bits($referralAddress, $ctx'sender) )) ));
+    $self'referralsCount = ($self'referralsCount + 1);
+    $global_send($SendParameters$_constructor_to_value_mode($self'parent, 0, 64));
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), ());
+}
+
+(((slice, slice, slice, int, int, int, slice, int, int)), ()) $ClaimChild$_internal_binary_Boost((slice, slice, slice, int, int, int, slice, int, int) $self, (int) $msg) impure inline {
+    var ($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban) = $self;
+    var ($msg'amount) = $msg;
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    throw_unless(666, ( (( __tact_slice_eq_bits($self'master, $ctx'sender) )) ? (true) : (( __tact_slice_eq_bits($self'parent, $ctx'sender) )) ));
+    $self'boost = ($self'boost + $msg'amount);
+    $global_send($SendParameters$_constructor_to_value_mode($ctx'sender, 0, 64));
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), ());
+}
+
+(((slice, slice, slice, int, int, int, slice, int, int)), ()) $ClaimChild$_internal_binary_Web3Ban((slice, slice, slice, int, int, int, slice, int, int) $self, (int, int, int) $msg) impure inline {
+    var ($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban) = $self;
+    var ($msg'ban, $msg'referralsCount, $msg'boost) = $msg;
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    throw_unless(666, ( (( __tact_slice_eq_bits($self'master, $ctx'sender) )) ? (true) : (( __tact_slice_eq_bits($self'parent, $ctx'sender) )) ));
+    $self'referralsCount = $msg'referralsCount;
+    $self'boost = $msg'boost;
+    $self'ban = $msg'ban;
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), ());
+}
+
+(((slice, slice, slice, int, int, int, slice, int, int)), ()) %$ClaimChild$_internal_empty((slice, slice, slice, int, int, int, slice, int, int) $self) impure inline {
+    var ($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban) = $self;
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    throw_unless(1001, ($ctx'value >= 120000000));
+    int $currentTime = now();
+    if (( ((($currentTime - $self'lastClaimTime) >= $self'interval)) ? ((~ $self'ban)) : (false) )) {
+        $self'lastClaimTime = $currentTime;
+        int $amount = $self'referralsCount;
+        $self'referralsCount = 0;
+        $global_send($SendParameters$_constructor_to_body_value_mode($self'parent, $Claim$_store_cell($Claim$_constructor_user_referrer_amount_boost($self'owner, $self'referrer, $amount, $self'boost)), 0, (64 + 2)));
+    } else {
+        $global_send($SendParameters$_constructor_to_value_mode_body($ctx'sender, 0, 64, __gen_cell_comment_c33de389bbf59c49087ec710bcb5b6f7e5ae13196f70d337b873fb680fe77a34()));
+    }
+    return (($self'owner, $self'parent, $self'master, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban), ());
+}
+
+;;
+;; Get methods of a Contract ClaimChild
+;;
+
+_ %lastClaimTime() method_id(84470) {
+    var self = $ClaimChild$_contract_load();
+    var res = self~$ClaimChild$_fun_lastClaimTime();
+    return res;
+}
+
+_ %parent() method_id(81825) {
+    var self = $ClaimChild$_contract_load();
+    var res = self~$ClaimChild$_fun_parent();
+    return res;
+}
+
+_ %master() method_id(120253) {
+    var self = $ClaimChild$_contract_load();
+    var res = self~$ClaimChild$_fun_master();
+    return res;
+}
+
+_ %referrer() method_id(110106) {
+    var self = $ClaimChild$_contract_load();
+    var res = self~$ClaimChild$_fun_referrer();
+    return res;
+}
+
+_ %interval() method_id(97297) {
+    var self = $ClaimChild$_contract_load();
+    var res = self~$ClaimChild$_fun_interval();
+    return res;
+}
+
+_ %referralsCount() method_id(128469) {
+    var self = $ClaimChild$_contract_load();
+    var res = self~$ClaimChild$_fun_referralsCount();
+    return res;
+}
+
+_ %ban() method_id(82040) {
+    var self = $ClaimChild$_contract_load();
+    var res = self~$ClaimChild$_fun_ban();
+    return res;
+}
+
+_ %get_state() method_id(86957) {
+    var self = $ClaimChild$_contract_load();
+    var res = self~$ClaimChild$_fun_get_state();
+    return $ChildState$_to_external(res);
+}
+
+_ %owner() method_id(83229) {
+    var self = $ClaimChild$_contract_load();
+    var res = self~$ClaimChild$_fun_owner();
+    return res;
+}
+
+_ supported_interfaces() method_id {
+    return (
+        "org.ton.introspection.v0"H >> 128,
+        "org.ton.abi.ipfs.v0"H >> 128,
+        "org.ton.deploy.lazy.v0"H >> 128,
+        "org.ton.chain.workchain.v0"H >> 128,
+        "org.ton.ownable"H >> 128
+    );
+}
+
+_ get_abi_ipfs() method_id {
+    return "ipfs://QmVTogjdWe3zdPwUsPKqGt9upzVTxSHa2cMYm2WYAHFsBn";
+}
+
+_ lazy_deployment_completed() method_id {
+    return get_data().begin_parse().load_int(1);
+}
+
+;;
+;; Routing of a Contract ClaimChild
+;;
+
+((slice, slice, slice, int, int, int, slice, int, int), int) $ClaimChild$_contract_router_internal((slice, slice, slice, int, int, int, slice, int, int) self, int msg_bounced, slice in_msg) impure inline_ref {
+    ;; Handle bounced messages
+    if (msg_bounced) {
+        return (self, true);
+    }
+    
+    ;; Parse incoming message
+    int op = 0;
+    if (slice_bits(in_msg) >= 32) {
+        op = in_msg.preload_uint(32);
+    }
+    
+    
+    ;; Receive MintChildNoClaim message
+    if (op == 17) {
+        var msg = in_msg~$MintChildNoClaim$_load();
+        self~$ClaimChild$_internal_binary_MintChildNoClaim(msg);
+        return (self, true);
+    }
+    
+    ;; Receive MintChildWithClaim message
+    if (op == 1) {
+        var msg = in_msg~$MintChildWithClaim$_load();
+        self~$ClaimChild$_internal_binary_MintChildWithClaim(msg);
+        return (self, true);
+    }
+    
+    ;; Receive AddReferral message
+    if (op == 3) {
+        var msg = in_msg~$AddReferral$_load();
+        self~$ClaimChild$_internal_binary_AddReferral(msg);
+        return (self, true);
+    }
+    
+    ;; Receive Boost message
+    if (op == 5) {
+        var msg = in_msg~$Boost$_load();
+        self~$ClaimChild$_internal_binary_Boost(msg);
+        return (self, true);
+    }
+    
+    ;; Receive Web3Ban message
+    if (op == 18) {
+        var msg = in_msg~$Web3Ban$_load();
+        self~$ClaimChild$_internal_binary_Web3Ban(msg);
+        return (self, true);
+    }
+    
+    ;; Receive empty message
+    if ((op == 0) & (slice_bits(in_msg) <= 32)) {
+        self~%$ClaimChild$_internal_empty();
+        return (self, true);
+    }
+    
+    return (self, false);
+}
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    var msg_flags = cs~load_uint(4);
+    var msg_bounced = -(msg_flags & 1);
+    slice msg_sender_addr = __tact_verify_address(cs~load_msg_addr());
+    __tact_context = (msg_bounced, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var self = $ClaimChild$_contract_load();
+    
+    ;; Handle operation
+    int handled = self~$ClaimChild$_contract_router_internal(msg_bounced, in_msg);
+    
+    ;; Throw if not handled
+    throw_unless(130, handled);
+    
+    ;; Persist state
+    $ClaimChild$_contract_store(self);
+}
