@@ -4,65 +4,40 @@ PROGRAM{
   DECLPROC __tact_load_address_opt
   DECLPROC __tact_store_address
   DECLPROC __tact_store_address_opt
-  DECLPROC __tact_create_address
-  DECLPROC __tact_compute_contract_address
   DECLPROC __tact_not_null
   DECLPROC __tact_context_get
   DECLPROC __tact_context_get_sender
   DECLPROC __tact_store_bool
   DECLPROC __tact_slice_eq_bits
-  DECLPROC __tact_dict_set_code
-  DECLPROC __tact_dict_get_code
-  DECLPROC $MintChildWithClaim$_load
-  DECLPROC $MintChildNoClaim$_load
+  DECLPROC __tact_slice_eq_bits_nullable_one
+  DECLPROC $Mint$_load
   DECLPROC $Claim$_store
   DECLPROC $Claim$_store_cell
-  DECLPROC $AddReferral$_store
-  DECLPROC $AddReferral$_store_cell
   DECLPROC $AddReferral$_load
   DECLPROC $Boost$_load
   DECLPROC $Web3Ban$_load
   DECLPROC $ClaimChild$_store
   DECLPROC $ClaimChild$_load
-  DECLPROC $ChildState$_to_external
-  DECLPROC $ClaimChild$init$_store
+  DECLPROC $ChildData$_to_external
   DECLPROC $ClaimChild$init$_load
   DECLPROC $ClaimChild$_contract_init
   DECLPROC $ClaimChild$_contract_load
   DECLPROC $ClaimChild$_contract_store
-  DECLPROC $global_contractAddress
   DECLPROC $global_send
-  DECLPROC $ClaimChild$_init_child
-  DECLPROC $ClaimChild$_fun_lastClaimTime
-  DECLPROC $ClaimChild$_fun_parent
-  DECLPROC $ClaimChild$_fun_master
-  DECLPROC $ClaimChild$_fun_referrer
-  DECLPROC $ClaimChild$_fun_interval
-  DECLPROC $ClaimChild$_fun_referralsCount
-  DECLPROC $ClaimChild$_fun_ban
-  DECLPROC $ChildState$_constructor_interval_lastClaimTime_referralsCount_boost
-  DECLPROC $ClaimChild$_fun_get_state
+  DECLPROC $ChildData$_constructor_interval_lastClaimTime_referralsCount_boost_owner_master_admin_referrer_ban
+  DECLPROC $ClaimChild$_fun_get_child_data
   DECLPROC $ClaimChild$_fun_owner
-  DECLPROC $SendParameters$_constructor_to_value_mode
   DECLPROC $SendParameters$_constructor_to_body_value_mode
-  DECLPROC $AddReferral$_constructor_from_to
   DECLPROC $Claim$_constructor_user_referrer_boost_amount
+  DECLPROC $SendParameters$_constructor_to_value_mode
   DECLPROC $Claim$_constructor_user_referrer_amount_boost
   DECLPROC $SendParameters$_constructor_to_value_mode_body
-  DECLPROC $ClaimChild$_internal_binary_MintChildNoClaim
-  DECLPROC $ClaimChild$_internal_binary_MintChildWithClaim
+  DECLPROC $ClaimChild$_internal_binary_Mint
   DECLPROC $ClaimChild$_internal_binary_AddReferral
   DECLPROC $ClaimChild$_internal_binary_Boost
   DECLPROC $ClaimChild$_internal_binary_Web3Ban
   DECLPROC %$ClaimChild$_internal_empty
-  84470 DECLMETHOD %lastClaimTime
-  81825 DECLMETHOD %parent
-  120253 DECLMETHOD %master
-  110106 DECLMETHOD %referrer
-  97297 DECLMETHOD %interval
-  128469 DECLMETHOD %referralsCount
-  82040 DECLMETHOD %ban
-  86957 DECLMETHOD %get_state
+  86637 DECLMETHOD %get_child_data
   83229 DECLMETHOD %owner
   113617 DECLMETHOD supported_interfaces
   121275 DECLMETHOD get_abi_ipfs
@@ -123,39 +98,6 @@ PROGRAM{
       __tact_store_address INLINECALLDICT
     }>
   }>
-  __tact_create_address PROCINLINE:<{
-    NEWC
-    2 PUSHINT
-    SWAP
-    2 STU
-    0 PUSHINT
-    SWAP
-    1 STU
-    s1 s2 XCHG
-    8 STI
-    256 STU
-    ENDC
-    CTOS
-    __tact_verify_address INLINECALLDICT
-  }>
-  __tact_compute_contract_address PROCINLINE:<{
-    NEWC
-    0 PUSHINT
-    SWAP
-    2 STU
-    3 PUSHINT
-    SWAP
-    2 STU
-    0 PUSHINT
-    SWAP
-    1 STU
-    s1 s2 XCHG
-    STREF
-    STREF
-    ENDC
-    HASHCU
-    __tact_create_address INLINECALLDICT
-  }>
   __tact_not_null PROCINLINE:<{
     DUP
     ISNULL
@@ -175,19 +117,17 @@ PROGRAM{
   __tact_slice_eq_bits PROCINLINE:<{
     SDEQ
   }>
-  __tact_dict_set_code PROCINLINE:<{
-    s0 s2 XCHG
-    16 PUSHINT
-    DICTUSETREF
+  __tact_slice_eq_bits_nullable_one PROCINLINE:<{
+    OVER
+    ISNULL
+    IF:<{
+      2DROP
+      FALSE
+    }>ELSE<{
+      SDEQ
+    }>
   }>
-  __tact_dict_get_code PROCINLINE:<{
-    SWAP
-    16 PUSHINT
-    DICTUGETREF
-    NULLSWAPIFNOT
-    135 THROWIFNOT
-  }>
-  $MintChildWithClaim$_load PROCINLINE:<{
+  $Mint$_load PROCINLINE:<{
     32 LDU
     SWAP
     1 EQINT
@@ -195,17 +135,11 @@ PROGRAM{
     __tact_load_address INLINECALLDICT
     SWAP
     __tact_load_address_opt INLINECALLDICT
-    s1 s2 XCHG
-  }>
-  $MintChildNoClaim$_load PROCINLINE:<{
+    SWAP
     32 LDU
-    SWAP
-    17 EQINT
-    129 THROWIFNOT
     __tact_load_address INLINECALLDICT
-    SWAP
-    __tact_load_address_opt INLINECALLDICT
-    s1 s2 XCHG
+    s1 s4 XCHG
+    s3 s3 s0 XCHG3
   }>
   $Claim$_store PROCINLINE:<{
     2 PUSHINT
@@ -224,21 +158,6 @@ PROGRAM{
     NEWC
     4 -ROLL
     $Claim$_store INLINECALLDICT
-    ENDC
-  }>
-  $AddReferral$_store PROCINLINE:<{
-    3 PUSHINT
-    s0 s3 XCHG2
-    32 STU
-    SWAP
-    __tact_store_address INLINECALLDICT
-    SWAP
-    __tact_store_address INLINECALLDICT
-  }>
-  $AddReferral$_store_cell PROCINLINE:<{
-    NEWC
-    -ROT
-    $AddReferral$_store INLINECALLDICT
     ENDC
   }>
   $AddReferral$_load PROCINLINE:<{
@@ -262,7 +181,7 @@ PROGRAM{
   $Web3Ban$_load PROCINLINE:<{
     32 LDU
     SWAP
-    18 EQINT
+    17 EQINT
     129 THROWIFNOT
     1 LDI
     32 LDU
@@ -275,7 +194,7 @@ PROGRAM{
     s0 s6 XCHG2
     __tact_store_address INLINECALLDICT
     s0 s4 XCHG2
-    __tact_store_address INLINECALLDICT
+    __tact_store_address_opt INLINECALLDICT
     s1 s2 XCHG
     32 STU
     64 STU
@@ -295,7 +214,7 @@ PROGRAM{
     SWAP
     __tact_load_address INLINECALLDICT
     SWAP
-    __tact_load_address INLINECALLDICT
+    __tact_load_address_opt INLINECALLDICT
     SWAP
     32 LDU
     64 LDU
@@ -315,40 +234,17 @@ PROGRAM{
     s3 s5 XCHG
     s3 s4 XCHG
   }>
-  $ChildState$_to_external PROCINLINE:<{
-  }>
-  $ClaimChild$init$_store PROCINLINE:<{
-    s4 s3 XCHG2
-    __tact_store_address INLINECALLDICT
-    SWAP
-    __tact_store_address INLINECALLDICT
-    ROT
-    __tact_store_address INLINECALLDICT
-    SWAP
-    NEWC
-    257 PUSHINT
-    STIX
-    ENDC
-    SWAP
-    STREF
+  $ChildData$_to_external PROCINLINE:<{
   }>
   $ClaimChild$init$_load PROCINLINE:<{
     __tact_load_address INLINECALLDICT
     SWAP
     __tact_load_address INLINECALLDICT
-    SWAP
-    __tact_load_address INLINECALLDICT
-    SWAP
-    LDREF
-    SWAP
-    CTOS
-    257 PUSHINT
-    LDIX
-    DROP
-    s1 s4 XCHG
-    s3 s3 s0 XCHG3
+    s1 s2 XCHG
   }>
   $ClaimChild$_contract_init PROCREF:<{
+    PUSHNULL
+    86400 PUSHINT
     0 PUSHINT
     DUP
     PUSHNULL
@@ -374,9 +270,9 @@ PROGRAM{
     EQUAL
     137 THROWIFNOT
     $ClaimChild$init$_load INLINECALLDICT
-    s0 s4 XCHG
+    s0 s2 XCHG
     ENDS
-    3 ROLL
+    SWAP
     $ClaimChild$_contract_init INLINECALLDICT
   }>
   $ClaimChild$_contract_store PROCINLINE:<{
@@ -391,11 +287,6 @@ PROGRAM{
     $ClaimChild$_store INLINECALLDICT
     ENDC
     c4 POP
-  }>
-  $global_contractAddress PROCINLINE:<{
-    0 PUSHINT
-    -ROT
-    __tact_compute_contract_address INLINECALLDICT
   }>
   $global_send PROCINLINE:<{
     NEWC
@@ -499,71 +390,16 @@ PROGRAM{
     SWAP
     SENDRAWMSG
   }>
-  $ClaimChild$_init_child PROCINLINE:<{
-    s0 s4 XCHG
-    CTOS
-    LDDICT
-    DROP
-    NEWDICT
-    SWAP
-    35122 PUSHINT
-    __tact_dict_get_code INLINECALLDICT
-    SWAP
-    35122 PUSHINT
-    s2 PUSH
-    __tact_dict_set_code INLINECALLDICT
-    NEWC
-    SWAP
-    NEWC
-    STDICT
-    ENDC
-    SWAP
-    STREF
-    FALSE
-    SWAP
-    1 STI
-    4 -ROLL
-    s0 s5 XCHG
-    $ClaimChild$init$_store INLINECALLDICT
-    ENDC
+  $ChildData$_constructor_interval_lastClaimTime_referralsCount_boost_owner_master_admin_referrer_ban PROCINLINE:<{
   }>
-  $ClaimChild$_fun_lastClaimTime PROCINLINE:<{
-    s4 PUSH
-  }>
-  $ClaimChild$_fun_parent PROCINLINE:<{
-    s7 PUSH
-  }>
-  $ClaimChild$_fun_master PROCINLINE:<{
-    s6 PUSH
-  }>
-  $ClaimChild$_fun_referrer PROCINLINE:<{
-    s2 PUSH
-  }>
-  $ClaimChild$_fun_interval PROCINLINE:<{
-    s5 PUSH
-  }>
-  $ClaimChild$_fun_referralsCount PROCINLINE:<{
-    s3 PUSH
-  }>
-  $ClaimChild$_fun_ban PROCINLINE:<{
-    DUP
-  }>
-  $ChildState$_constructor_interval_lastClaimTime_referralsCount_boost PROCINLINE:<{
-  }>
-  $ClaimChild$_fun_get_state PROCINLINE:<{
+  $ClaimChild$_fun_get_child_data PROCINLINE:<{
     s5 s4 s3 PUSH3
-    s4 PUSH
-    $ChildState$_constructor_interval_lastClaimTime_referralsCount_boost INLINECALLDICT
+    s4 s11 s10 PUSH3
+    s12 s8 s6 PUSH3
+    $ChildData$_constructor_interval_lastClaimTime_referralsCount_boost_owner_master_admin_referrer_ban INLINECALLDICT
   }>
   $ClaimChild$_fun_owner PROCINLINE:<{
     s8 PUSH
-  }>
-  $SendParameters$_constructor_to_value_mode PROCINLINE:<{
-    TRUE
-    3 -ROLL
-    PUSHNULL
-    PUSHNULL
-    PUSHNULL
   }>
   $SendParameters$_constructor_to_body_value_mode PROCINLINE:<{
     TRUE
@@ -572,10 +408,15 @@ PROGRAM{
     PUSHNULL
     PUSHNULL
   }>
-  $AddReferral$_constructor_from_to PROCINLINE:<{
-  }>
   $Claim$_constructor_user_referrer_boost_amount PROCINLINE:<{
     s1 s3 s3 XCHG3
+  }>
+  $SendParameters$_constructor_to_value_mode PROCINLINE:<{
+    TRUE
+    3 -ROLL
+    PUSHNULL
+    PUSHNULL
+    PUSHNULL
   }>
   $Claim$_constructor_user_referrer_amount_boost PROCINLINE:<{
     2SWAP
@@ -586,44 +427,12 @@ PROGRAM{
     PUSHNULL
     PUSHNULL
   }>
-  $ClaimChild$_internal_binary_MintChildNoClaim PROCINLINE:<{
-    NIP
+  $ClaimChild$_internal_binary_Mint PROCINLINE:<{
     s3 POP
-    __tact_context_get_sender INLINECALLDICT
-    s8 s(-1) PUXC
-    __tact_slice_eq_bits INLINECALLDICT
-    666 THROWIFNOT
-    s2 PUSH
-    ISNULL
-    IF:<{
-      s7 PUSH
-      0 PUSHINT
-      64 PUSHINT
-      $SendParameters$_constructor_to_value_mode INLINECALLDICT
-      $global_send INLINECALLDICT
-    }>ELSE<{
-      __tact_context_sys GETGLOB
-      s3 PUSH
-      __tact_not_null INLINECALLDICT
-      s9 s8 s(-1) PU2XC
-      s9 PUSH
-      $ClaimChild$_init_child INLINECALLDICT
-      $global_contractAddress INLINECALLDICT
-      s3 PUSH
-      __tact_not_null INLINECALLDICT
-      s10 s(-1) PUXC
-      $AddReferral$_constructor_from_to INLINECALLDICT
-      $AddReferral$_store_cell INLINECALLDICT
-      0 PUSHINT
-      64 PUSHINT
-      $SendParameters$_constructor_to_body_value_mode INLINECALLDICT
-      $global_send INLINECALLDICT
-    }>
-  }>
-  $ClaimChild$_internal_binary_MintChildWithClaim PROCINLINE:<{
-    NIP
-    s3 POP
-    s4 POP
+    s5 POP
+    s6 POP
+    s6 POP
+    s6 POP
     __tact_context_get_sender INLINECALLDICT
     s7 s(-1) PUXC
     __tact_slice_eq_bits INLINECALLDICT
@@ -631,7 +440,7 @@ PROGRAM{
     NOW
     0 PUSHINT
     s9 s(-1) s(-1) PUXCPU
-    s5 PUSH
+    s7 PUSH
     s0 s2 XCHG
     $Claim$_constructor_user_referrer_boost_amount INLINECALLDICT
     $Claim$_store_cell INLINECALLDICT
@@ -640,32 +449,23 @@ PROGRAM{
     64 PUSHINT
     $SendParameters$_constructor_to_body_value_mode INLINECALLDICT
     $global_send INLINECALLDICT
-    s0 s4 XCHG
+    s5 s6 XCHG
+    s5 s1 s4 XCHG3
+    s0 s2 XCHG
   }>
   $ClaimChild$_internal_binary_AddReferral PROCINLINE:<{
-    DROP
-    __tact_context_sys GETGLOB
-    s9 s1 PUXC
-    s9 s8 PUSH2
-    $ClaimChild$_init_child INLINECALLDICT
-    $global_contractAddress INLINECALLDICT
+    2DROP
     __tact_context_get INLINECALLDICT
     s2 s3 XCHG
     3 BLKDROP
-    s9 s0 PUSH2
+    s8 s(-1) PUXC
     __tact_slice_eq_bits INLINECALLDICT
-    IF:<{
-      2DROP
-      TRUE
-    }>ELSE<{
-      __tact_slice_eq_bits INLINECALLDICT
-    }>
     666 THROWIFNOT
     s0 s3 XCHG
     INC
     s7 PUSH
     0 PUSHINT
-    64 PUSHINT
+    66 PUSHINT
     $SendParameters$_constructor_to_value_mode INLINECALLDICT
     $global_send INLINECALLDICT
     s0 s3 XCHG
@@ -675,7 +475,7 @@ PROGRAM{
     s2 s3 XCHG
     3 BLKDROP
     s8 s0 PUSH2
-    __tact_slice_eq_bits INLINECALLDICT
+    __tact_slice_eq_bits_nullable_one INLINECALLDICT
     IF:<{
       TRUE
     }>ELSE<{
@@ -687,7 +487,7 @@ PROGRAM{
     ADD
     s0 s2 XCHG
     0 PUSHINT
-    64 PUSHINT
+    66 PUSHINT
     $SendParameters$_constructor_to_value_mode INLINECALLDICT
     $global_send INLINECALLDICT
   }>
@@ -699,7 +499,7 @@ PROGRAM{
     s2 s3 XCHG
     3 BLKDROP
     s7 s0 PUSH2
-    __tact_slice_eq_bits INLINECALLDICT
+    __tact_slice_eq_bits_nullable_one INLINECALLDICT
     IF:<{
       DROP
       TRUE
@@ -743,52 +543,17 @@ PROGRAM{
     }>ELSE<{
       DROP
       0 PUSHINT
-      64 PUSHINT
+      66 PUSHINT
       B{b5ee9c7241010101000a00001000000000f09fa6986c060c3a} B>boc PUSHREF
       $SendParameters$_constructor_to_value_mode_body INLINECALLDICT
       $global_send INLINECALLDICT
     }>
   }>
-  %lastClaimTime PROC:<{
+  %get_child_data PROC:<{
     $ClaimChild$_contract_load INLINECALLDICT
-    $ClaimChild$_fun_lastClaimTime INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %parent PROC:<{
-    $ClaimChild$_contract_load INLINECALLDICT
-    $ClaimChild$_fun_parent INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %master PROC:<{
-    $ClaimChild$_contract_load INLINECALLDICT
-    $ClaimChild$_fun_master INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %referrer PROC:<{
-    $ClaimChild$_contract_load INLINECALLDICT
-    $ClaimChild$_fun_referrer INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %interval PROC:<{
-    $ClaimChild$_contract_load INLINECALLDICT
-    $ClaimChild$_fun_interval INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %referralsCount PROC:<{
-    $ClaimChild$_contract_load INLINECALLDICT
-    $ClaimChild$_fun_referralsCount INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %ban PROC:<{
-    $ClaimChild$_contract_load INLINECALLDICT
-    $ClaimChild$_fun_ban INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %get_state PROC:<{
-    $ClaimChild$_contract_load INLINECALLDICT
-    $ClaimChild$_fun_get_state INLINECALLDICT
-    9 4 BLKDROP2
-    $ChildState$_to_external INLINECALLDICT
+    $ClaimChild$_fun_get_child_data INLINECALLDICT
+    9 9 BLKDROP2
+    $ChildData$_to_external INLINECALLDICT
   }>
   %owner PROC:<{
     $ClaimChild$_contract_load INLINECALLDICT
@@ -803,7 +568,7 @@ PROGRAM{
     86142586315491086060343270784266291122 PUSHINT
   }>
   get_abi_ipfs PROC:<{
-    x{697066733a2f2f516d56546f676a645765337a6450775573504b7147743975707a56547853486132634d596d32575941484673426e} PUSHSLICE
+    x{697066733a2f2f516d557965386b7a4c596e6b4a4c42674d4a417363387065654e6d516b636a746d397168786245624c6159445467} PUSHSLICE
   }>
   lazy_deployment_completed PROC:<{
     c4 PUSH
@@ -827,21 +592,12 @@ PROGRAM{
       32 PLDU
     }>
     DUP
-    17 EQINT
-    IFJMP:<{
-      DROP
-      $MintChildNoClaim$_load INLINECALLDICT
-      1 2 BLKDROP2
-      $ClaimChild$_internal_binary_MintChildNoClaim INLINECALLDICT
-      TRUE
-    }>
-    DUP
     1 EQINT
     IFJMP:<{
       DROP
-      $MintChildWithClaim$_load INLINECALLDICT
-      1 2 BLKDROP2
-      $ClaimChild$_internal_binary_MintChildWithClaim INLINECALLDICT
+      $Mint$_load INLINECALLDICT
+      1 4 BLKDROP2
+      $ClaimChild$_internal_binary_Mint INLINECALLDICT
       TRUE
     }>
     DUP
@@ -863,7 +619,7 @@ PROGRAM{
       TRUE
     }>
     DUP
-    18 EQINT
+    17 EQINT
     IFJMP:<{
       DROP
       $Web3Ban$_load INLINECALLDICT

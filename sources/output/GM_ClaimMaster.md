@@ -1,9 +1,9 @@
 # TACT Compilation Report
 Contract: ClaimMaster
-BOC Size: 4366 bytes
+BOC Size: 3580 bytes
 
 # Types
-Total Types: 25
+Total Types: 24
 
 ## StateInit
 TLB: `_ code:^cell data:^cell = StateInit`
@@ -37,13 +37,13 @@ Signature: `ChangeOwner{queryId:uint64,newOwner:address}`
 TLB: `change_owner_ok#327b2b4a queryId:uint64 newOwner:address = ChangeOwnerOk`
 Signature: `ChangeOwnerOk{queryId:uint64,newOwner:address}`
 
-## MintChildWithClaim
-TLB: `mint_child_with_claim#00000001 user:address referrer:Maybe address = MintChildWithClaim`
-Signature: `MintChildWithClaim{user:address,referrer:Maybe address}`
+## ChildData
+TLB: `_ interval:uint32 lastClaimTime:uint64 referralsCount:uint32 boost:uint32 owner:address master:address admin:Maybe address referrer:Maybe address ban:bool = ChildData`
+Signature: `ChildData{interval:uint32,lastClaimTime:uint64,referralsCount:uint32,boost:uint32,owner:address,master:address,admin:Maybe address,referrer:Maybe address,ban:bool}`
 
-## MintChildNoClaim
-TLB: `mint_child_no_claim#00000011 user:address referrer:Maybe address = MintChildNoClaim`
-Signature: `MintChildNoClaim{user:address,referrer:Maybe address}`
+## Mint
+TLB: `mint#00000001 user:address referrer:Maybe address interval:uint32 admin:address = Mint`
+Signature: `Mint{user:address,referrer:Maybe address,interval:uint32,admin:address}`
 
 ## Claim
 TLB: `claim#00000002 amount:coins boost:coins user:address referrer:Maybe address = Claim`
@@ -62,16 +62,16 @@ TLB: `boost#00000005 amount:uint32 = Boost`
 Signature: `Boost{amount:uint32}`
 
 ## OwnerWithdrawalRequest
-TLB: `owner_withdrawal_request#00000006 amount:coins tokenAddress:address = OwnerWithdrawalRequest`
-Signature: `OwnerWithdrawalRequest{amount:coins,tokenAddress:address}`
+TLB: `owner_withdrawal_request#00000006 amount:coins jettonWallet:address = OwnerWithdrawalRequest`
+Signature: `OwnerWithdrawalRequest{amount:coins,jettonWallet:address}`
 
 ## OwnerWithdrawalTonRequest
 TLB: `owner_withdrawal_ton_request#00000007  = OwnerWithdrawalTonRequest`
 Signature: `OwnerWithdrawalTonRequest{}`
 
-## TokenConfig
-TLB: `token_config#00000008 tokenAddress:address claimAmount:coins referralReward:coins boostReward:coins = TokenConfig`
-Signature: `TokenConfig{tokenAddress:address,claimAmount:coins,referralReward:coins,boostReward:coins}`
+## MasterConfig
+TLB: `master_config#00000008 jettonWallet:address interval:uint32 claimAmount:coins referralReward:coins boostReward:coins = MasterConfig`
+Signature: `MasterConfig{jettonWallet:address,interval:uint32,claimAmount:coins,referralReward:coins,boostReward:coins}`
 
 ## CustomMessage
 TLB: `custom_message#00000009 to:address payload:Maybe ^cell = CustomMessage`
@@ -82,50 +82,32 @@ TLB: `referral#00000010 referral:address referrer:address = Referral`
 Signature: `Referral{referral:address,referrer:address}`
 
 ## Web3Ban
-TLB: `web3_ban#00000012 ban:bool referralsCount:uint32 boost:uint32 = Web3Ban`
+TLB: `web3_ban#00000011 ban:bool referralsCount:uint32 boost:uint32 = Web3Ban`
 Signature: `Web3Ban{ban:bool,referralsCount:uint32,boost:uint32}`
 
-## SetCode
-TLB: `set_code#00000013 newCode:^cell = SetCode`
-Signature: `SetCode{newCode:^cell}`
+## ChangeMinter
+TLB: `change_minter#00000012 newMinter:address = ChangeMinter`
+Signature: `ChangeMinter{newMinter:address}`
 
 ## TokenNotification
 TLB: `token_notification#7362d09c queryId:uint64 amount:coins from:address forwardPayload:remainder<slice> = TokenNotification`
 Signature: `TokenNotification{queryId:uint64,amount:coins,from:address,forwardPayload:remainder<slice>}`
 
-## TokenExcesses
-TLB: `token_excesses#d53276db queryId:uint64 = TokenExcesses`
-Signature: `TokenExcesses{queryId:uint64}`
-
 ## TokenTransfer
 TLB: `token_transfer#0f8a7ea5 queryId:uint64 amount:coins destination:address responseDestination:Maybe address customPayload:Maybe ^cell forwardTonAmount:coins forwardPayload:Maybe ^slice = TokenTransfer`
 Signature: `TokenTransfer{queryId:uint64,amount:coins,destination:address,responseDestination:Maybe address,customPayload:Maybe ^cell,forwardTonAmount:coins,forwardPayload:Maybe ^slice}`
 
-## ChildState
-TLB: `_ interval:uint32 lastClaimTime:uint64 referralsCount:uint32 boost:uint32 = ChildState`
-Signature: `ChildState{interval:uint32,lastClaimTime:uint64,referralsCount:uint32,boost:uint32}`
+## MasterData
+TLB: `_ jettonWallet:Maybe address interval:uint32 minter:address admin:address claimAmount:int257 referralReward:int257 boostReward:int257 = MasterData`
+Signature: `MasterData{jettonWallet:Maybe address,interval:uint32,minter:address,admin:address,claimAmount:int257,referralReward:int257,boostReward:int257}`
 
 # Get Methods
-Total Get Methods: 9
-
-## interval
-
-## tokenAddress
-
-## queryId
+Total Get Methods: 2
 
 ## get_user_address
 Argument: user
 
-## claimAmount
-
-## referralReward
-
-## boostReward
-
-## test
-
-## owner
+## get_master_data
 
 # Error Codes
 2: Stack undeflow

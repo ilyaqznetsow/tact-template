@@ -10,210 +10,131 @@
 ;; Contract ClaimMaster functions
 ;;
 
-(int, slice, int, slice, slice, int, int, int, int) $ClaimMaster$_contract_init(slice $owner, slice $master, int $interval) impure inline_ref {
-    var (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)) = (null(), null(), null(), null(), null(), 300000000, 150000000, 5000000, 8);
-    $self'owner = $owner;
-    $self'queryId = 0;
-    $self'tokenAddress = null();
-    $self'interval = $interval;
-    $self'master = $master;
-    return ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test);
+(slice, int, slice, slice, int, int, int) $ClaimMaster$_contract_init(slice $minter, slice $admin) impure inline_ref {
+    var (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward)) = (null(), 86400, null(), null(), 300000000, 150000000, 5000000);
+    $self'minter = $minter;
+    $self'admin = $admin;
+    return ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward);
 }
 
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_fun_interval((int, slice, int, slice, slice, int, int, int, int) $self) impure inline {
-    var (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)) = $self;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), $self'interval);
+((slice, int, slice, slice, int, int, int), slice) $ClaimMaster$_fun_get_user_address((slice, int, slice, slice, int, int, int) $self, slice $user) impure inline {
+    var (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward)) = $self;
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), $global_contractAddress($ClaimChild$_init_child(__tact_context_sys, my_address(), $user)));
 }
 
-((int, slice, int, slice, slice, int, int, int, int), slice) $ClaimMaster$_fun_tokenAddress((int, slice, int, slice, slice, int, int, int, int) $self) impure inline {
-    var (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)) = $self;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), $self'tokenAddress);
-}
-
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_fun_queryId((int, slice, int, slice, slice, int, int, int, int) $self) impure inline {
-    var (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)) = $self;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), $self'queryId);
-}
-
-((int, slice, int, slice, slice, int, int, int, int), slice) $ClaimMaster$_fun_get_user_address((int, slice, int, slice, slice, int, int, int, int) $self, slice $user) impure inline {
-    var (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)) = $self;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), $global_contractAddress($ClaimChild$_init_child(__tact_context_sys, my_address(), $user, $self'owner, $self'interval)));
-}
-
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_fun_claimAmount((int, slice, int, slice, slice, int, int, int, int) $self) impure inline {
-    var (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)) = $self;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), $self'claimAmount);
-}
-
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_fun_referralReward((int, slice, int, slice, slice, int, int, int, int) $self) impure inline {
-    var (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)) = $self;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), $self'referralReward);
-}
-
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_fun_boostReward((int, slice, int, slice, slice, int, int, int, int) $self) impure inline {
-    var (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)) = $self;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), $self'boostReward);
-}
-
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_fun_test((int, slice, int, slice, slice, int, int, int, int) $self) impure inline {
-    var (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)) = $self;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), $self'test);
-}
-
-((int, slice, int, slice, slice, int, int, int, int), slice) $ClaimMaster$_fun_owner((int, slice, int, slice, slice, int, int, int, int) $self) impure inline {
-    var (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)) = $self;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), $self'owner);
+((slice, int, slice, slice, int, int, int), (slice, int, slice, slice, int, int, int)) $ClaimMaster$_fun_get_master_data((slice, int, slice, slice, int, int, int) $self) impure inline {
+    var (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward)) = $self;
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), $MasterData$_constructor_jettonWallet_interval_minter_admin_claimAmount_referralReward_boostReward($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward));
 }
 
 ;;
 ;; Receivers of a Contract ClaimMaster
 ;;
 
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_ChangeOwner((int, slice, int, slice, slice, int, int, int, int) $self, (int, slice) $msg) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
-    var ($msg'queryId, $msg'newOwner) = $msg;
-    throw_unless(101, ( __tact_slice_eq_bits($self'master, __tact_context_get_sender()) ));
-    $self'owner = $msg'newOwner;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
+(((slice, int, slice, slice, int, int, int)), ()) $ClaimMaster$_internal_binary_Mint((slice, int, slice, slice, int, int, int) $self, (slice, slice, int, slice) $msg) impure inline {
+    var ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward) = $self;
+    var ($msg'user, $msg'referrer, $msg'interval, $msg'admin) = $msg;
+    throw_unless(101, ( __tact_slice_eq_bits($self'minter, __tact_context_get_sender()) ));
+    var ($init'code, $init'data) = $ClaimChild$_init_child(__tact_context_sys, my_address(), $msg'user);
+    $global_send($SendParameters$_constructor_to_value_mode_code_data_body($global_contractAddress(($init'code, $init'data)), 0, 64, $init'code, $init'data, $Mint$_store_cell(($msg'user, $msg'referrer, $msg'interval, $msg'admin))));
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
 }
 
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_CustomMessage((int, slice, int, slice, slice, int, int, int, int) $self, (slice, cell) $msg) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
-    var ($msg'to, $msg'payload) = $msg;
-    throw_unless(101, ( __tact_slice_eq_bits($self'master, __tact_context_get_sender()) ));
-    $global_send($SendParameters$_constructor_to_value_mode_body($msg'to, 0, 64, $msg'payload));
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
-}
-
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_SetCode((int, slice, int, slice, slice, int, int, int, int) $self, (cell) $msg) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
-    var ($msg'newCode) = $msg;
-    throw_unless(101, ( __tact_slice_eq_bits($self'master, __tact_context_get_sender()) ));
-    set_code($msg'newCode);
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
-}
-
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_TokenNotification((int, slice, int, slice, slice, int, int, int, int) $self, (int, int, slice, slice) $msg) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
-    var ($msg'queryId, $msg'amount, $msg'from, $msg'forwardPayload) = $msg;
-    throw_unless(101, ( __tact_slice_eq_bits_nullable_one($self'tokenAddress, __tact_context_get_sender()) ));
-    slice $userContract = ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)~$ClaimMaster$_fun_get_user_address($msg'from);
-    $global_send($SendParameters$_constructor_to_value_mode_body($userContract, 0, 64, $Boost$_store_cell($Boost$_constructor_amount(($msg'amount / 1000000000)))));
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
-}
-
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_MintChildWithClaim((int, slice, int, slice, slice, int, int, int, int) $self, (slice, slice) $msg) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
-    var ($msg'user, $msg'referrer) = $msg;
-    throw_unless(101, ( __tact_slice_eq_bits($self'owner, __tact_context_get_sender()) ));
-    var ($init'code, $init'data) = $ClaimChild$_init_child(__tact_context_sys, my_address(), $msg'user, $self'owner, $self'interval);
-    $global_send($SendParameters$_constructor_to_value_mode_code_data_body($global_contractAddress(($init'code, $init'data)), 0, 64, $init'code, $init'data, $MintChildWithClaim$_store_cell(($msg'user, $msg'referrer))));
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
-}
-
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_MintChildNoClaim((int, slice, int, slice, slice, int, int, int, int) $self, (slice, slice) $msg) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
-    var ($msg'user, $msg'referrer) = $msg;
-    throw_unless(101, ( __tact_slice_eq_bits($self'owner, __tact_context_get_sender()) ));
-    var ($init'code, $init'data) = $ClaimChild$_init_child(__tact_context_sys, my_address(), $msg'user, $self'owner, $self'interval);
-    $global_send($SendParameters$_constructor_to_value_mode_code_data_body($global_contractAddress(($init'code, $init'data)), 0, 64, $init'code, $init'data, $MintChildNoClaim$_store_cell(($msg'user, $msg'referrer))));
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
-}
-
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_Claim((int, slice, int, slice, slice, int, int, int, int) $self, (int, int, slice, slice) $msg) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
+(((slice, int, slice, slice, int, int, int)), ()) $ClaimMaster$_internal_binary_Claim((slice, int, slice, slice, int, int, int) $self, (int, int, slice, slice) $msg) impure inline {
+    var ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward) = $self;
     var ($msg'amount, $msg'boost, $msg'user, $msg'referrer) = $msg;
-    slice $expected = ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)~$ClaimMaster$_fun_get_user_address($msg'user);
+    slice $expected = ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward)~$ClaimMaster$_fun_get_user_address($msg'user);
     throw_unless(101, ( __tact_slice_eq_bits($expected, __tact_context_get_sender()) ));
-    $global_send($SendParameters$_constructor_value_to_mode_body(50000000, __tact_not_null($self'tokenAddress), 0, $TokenTransfer$_store_cell($TokenTransfer$_constructor_queryId_amount_destination_responseDestination_customPayload_forwardTonAmount_forwardPayload(0, (($self'claimAmount + ($msg'amount * $self'referralReward)) + ($msg'boost * $self'boostReward)), $msg'user, my_address(), null(), 1, null()))));
+    $global_send($SendParameters$_constructor_value_to_mode_body(50000000, __tact_not_null($self'jettonWallet), 0, $TokenTransfer$_store_cell($TokenTransfer$_constructor_queryId_amount_destination_responseDestination_customPayload_forwardTonAmount_forwardPayload(0, (($self'claimAmount + ($msg'amount * $self'referralReward)) + ($msg'boost * $self'boostReward)), $msg'user, my_address(), null(), 1, null()))));
     if ((~ null?($msg'referrer))) {
-        slice $refAddress = ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)~$ClaimMaster$_fun_get_user_address(__tact_not_null($msg'referrer));
+        slice $refAddress = ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward)~$ClaimMaster$_fun_get_user_address(__tact_not_null($msg'referrer));
         $global_send($SendParameters$_constructor_value_to_mode_body(0, $refAddress, 64, $AddReferral$_store_cell($AddReferral$_constructor_from_to($msg'user, __tact_not_null($msg'referrer)))));
     }
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
 }
 
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_AddReferral((int, slice, int, slice, slice, int, int, int, int) $self, (slice, slice) $msg) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
+(((slice, int, slice, slice, int, int, int)), ()) $ClaimMaster$_internal_binary_AddReferral((slice, int, slice, slice, int, int, int) $self, (slice, slice) $msg) impure inline {
+    var ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward) = $self;
     var ($msg'from, $msg'to) = $msg;
-    slice $expected = ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)~$ClaimMaster$_fun_get_user_address($msg'from);
+    slice $expected = ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward)~$ClaimMaster$_fun_get_user_address($msg'from);
     throw_unless(101, ( __tact_slice_eq_bits($expected, __tact_context_get_sender()) ));
-    slice $refAddress = ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)~$ClaimMaster$_fun_get_user_address($msg'to);
+    slice $refAddress = ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward)~$ClaimMaster$_fun_get_user_address($msg'to);
     $global_send($SendParameters$_constructor_value_to_mode_body(0, $refAddress, 64, $AddReferral$_store_cell(($msg'from, $msg'to))));
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
 }
 
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_TokenConfig((int, slice, int, slice, slice, int, int, int, int) $self, (slice, int, int, int) $msg) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
-    var ($msg'tokenAddress, $msg'claimAmount, $msg'referralReward, $msg'boostReward) = $msg;
+(((slice, int, slice, slice, int, int, int)), ()) $ClaimMaster$_internal_binary_MasterConfig((slice, int, slice, slice, int, int, int) $self, (slice, int, int, int, int) $msg) impure inline {
+    var ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward) = $self;
+    var ($msg'jettonWallet, $msg'interval, $msg'claimAmount, $msg'referralReward, $msg'boostReward) = $msg;
     var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
-    throw_unless(101, ( (( __tact_slice_eq_bits($self'owner, $ctx'sender) )) ? (true) : (( __tact_slice_eq_bits($self'master, $ctx'sender) )) ));
-    $self'tokenAddress = $msg'tokenAddress;
+    throw_unless(101, ( (( __tact_slice_eq_bits($self'minter, $ctx'sender) )) ? (true) : (( __tact_slice_eq_bits($self'admin, $ctx'sender) )) ));
+    $self'jettonWallet = $msg'jettonWallet;
+    $self'interval = $msg'interval;
     $self'claimAmount = $msg'claimAmount;
     $self'referralReward = $msg'referralReward;
     $self'boostReward = $msg'boostReward;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
 }
 
-(((int, slice, int, slice, slice, int, int, int, int)), ()) %$ClaimMaster$_internal_empty((int, slice, int, slice, slice, int, int, int, int) $self) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
+(((slice, int, slice, slice, int, int, int)), ()) $ClaimMaster$_internal_binary_ChangeMinter((slice, int, slice, slice, int, int, int) $self, (slice) $msg) impure inline {
+    var ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward) = $self;
+    var ($msg'newMinter) = $msg;
+    throw_unless(101, ( __tact_slice_eq_bits($self'admin, __tact_context_get_sender()) ));
+    $self'minter = $msg'newMinter;
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
 }
 
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_TokenExcesses((int, slice, int, slice, slice, int, int, int, int) $self, (int) $msg) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
-    var ($msg'queryId) = $msg;
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
+(((slice, int, slice, slice, int, int, int)), ()) $ClaimMaster$_internal_binary_CustomMessage((slice, int, slice, slice, int, int, int) $self, (slice, cell) $msg) impure inline {
+    var ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward) = $self;
+    var ($msg'to, $msg'payload) = $msg;
+    throw_unless(101, ( __tact_slice_eq_bits($self'admin, __tact_context_get_sender()) ));
+    $global_send($SendParameters$_constructor_to_value_mode_body($msg'to, 0, 64, $msg'payload));
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
 }
 
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_OwnerWithdrawalTonRequest((int, slice, int, slice, slice, int, int, int, int) $self, tuple $msg) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
+(((slice, int, slice, slice, int, int, int)), ()) $ClaimMaster$_internal_binary_TokenNotification((slice, int, slice, slice, int, int, int) $self, (int, int, slice, slice) $msg) impure inline {
+    var ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward) = $self;
+    var ($msg'queryId, $msg'amount, $msg'from, $msg'forwardPayload) = $msg;
+    throw_unless(101, ( __tact_slice_eq_bits_nullable_one($self'jettonWallet, __tact_context_get_sender()) ));
+    slice $userContract = ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward)~$ClaimMaster$_fun_get_user_address($msg'from);
+    $global_send($SendParameters$_constructor_to_value_mode_body($userContract, 0, 64, $Boost$_store_cell($Boost$_constructor_amount(($msg'amount / 1000000000)))));
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
+}
+
+(((slice, int, slice, slice, int, int, int)), ()) %$ClaimMaster$_internal_empty((slice, int, slice, slice, int, int, int) $self) impure inline {
+    var ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward) = $self;
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
+}
+
+(((slice, int, slice, slice, int, int, int)), ()) $ClaimMaster$_internal_binary_OwnerWithdrawalTonRequest((slice, int, slice, slice, int, int, int) $self, tuple $msg) impure inline {
+    var ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward) = $self;
     var $msg = $msg;
-    throw_unless(1001, ( __tact_slice_eq_bits($self'master, __tact_context_get_sender()) ));
-    $global_send($SendParameters$_constructor_to_value_mode($self'master, 0, 128));
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
+    throw_unless(1001, ( __tact_slice_eq_bits($self'admin, __tact_context_get_sender()) ));
+    $global_send($SendParameters$_constructor_to_value_mode($self'admin, 0, (128 + 2)));
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
 }
 
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_OwnerWithdrawalRequest((int, slice, int, slice, slice, int, int, int, int) $self, (int, slice) $msg) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
-    var ($msg'amount, $msg'tokenAddress) = $msg;
-    throw_unless(1001, ( __tact_slice_eq_bits($self'master, __tact_context_get_sender()) ));
-    if ((~ null?($msg'tokenAddress))) {
-        $global_send($SendParameters$_constructor_value_to_mode_body(65000000, $msg'tokenAddress, 0, $TokenTransfer$_store_cell($TokenTransfer$_constructor_queryId_amount_destination_responseDestination_customPayload_forwardTonAmount_forwardPayload($self'queryId, $msg'amount, $self'master, $self'master, null(), 1, null()))));
-        $self'queryId = ($self'queryId + 1);
+(((slice, int, slice, slice, int, int, int)), ()) $ClaimMaster$_internal_binary_OwnerWithdrawalRequest((slice, int, slice, slice, int, int, int) $self, (int, slice) $msg) impure inline {
+    var ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward) = $self;
+    var ($msg'amount, $msg'jettonWallet) = $msg;
+    throw_unless(1001, ( __tact_slice_eq_bits($self'admin, __tact_context_get_sender()) ));
+    if ((~ null?($msg'jettonWallet))) {
+        $global_send($SendParameters$_constructor_value_to_mode_body(65000000, $msg'jettonWallet, 0, $TokenTransfer$_store_cell($TokenTransfer$_constructor_queryId_amount_destination_responseDestination_customPayload_forwardTonAmount_forwardPayload(0, $msg'amount, $self'admin, $self'admin, null(), 1, null()))));
     }
-    $global_send($SendParameters$_constructor_to_value_mode($self'master, 0, 128));
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
+    $global_send($SendParameters$_constructor_to_value_mode($self'admin, 0, (128 + 2)));
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
 }
 
-(((int, slice, int, slice, slice, int, int, int, int)), ()) $ClaimMaster$_internal_binary_Deploy((int, slice, int, slice, slice, int, int, int, int) $self, (int) $deploy) impure inline {
-    var ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test) = $self;
+(((slice, int, slice, slice, int, int, int)), ()) $ClaimMaster$_internal_binary_Deploy((slice, int, slice, slice, int, int, int) $self, (int) $deploy) impure inline {
+    var ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward) = $self;
     var ($deploy'queryId) = $deploy;
-    ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)~$ClaimMaster$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
+    ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward)~$ClaimMaster$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
 }
 
 ;;
 ;; Get methods of a Contract ClaimMaster
 ;;
-
-_ %interval() method_id(97297) {
-    var self = $ClaimMaster$_contract_load();
-    var res = self~$ClaimMaster$_fun_interval();
-    return res;
-}
-
-_ %tokenAddress() method_id(106685) {
-    var self = $ClaimMaster$_contract_load();
-    var res = self~$ClaimMaster$_fun_tokenAddress();
-    return res;
-}
-
-_ %queryId() method_id(94948) {
-    var self = $ClaimMaster$_contract_load();
-    var res = self~$ClaimMaster$_fun_queryId();
-    return res;
-}
 
 _ %get_user_address(slice $$user) method_id(102784) {
     slice $user = __tact_verify_address($$user);
@@ -222,34 +143,10 @@ _ %get_user_address(slice $$user) method_id(102784) {
     return res;
 }
 
-_ %claimAmount() method_id(72575) {
+_ %get_master_data() method_id(84263) {
     var self = $ClaimMaster$_contract_load();
-    var res = self~$ClaimMaster$_fun_claimAmount();
-    return res;
-}
-
-_ %referralReward() method_id(71076) {
-    var self = $ClaimMaster$_contract_load();
-    var res = self~$ClaimMaster$_fun_referralReward();
-    return res;
-}
-
-_ %boostReward() method_id(78416) {
-    var self = $ClaimMaster$_contract_load();
-    var res = self~$ClaimMaster$_fun_boostReward();
-    return res;
-}
-
-_ %test() method_id(105222) {
-    var self = $ClaimMaster$_contract_load();
-    var res = self~$ClaimMaster$_fun_test();
-    return res;
-}
-
-_ %owner() method_id(83229) {
-    var self = $ClaimMaster$_contract_load();
-    var res = self~$ClaimMaster$_fun_owner();
-    return res;
+    var res = self~$ClaimMaster$_fun_get_master_data();
+    return $MasterData$_to_external(res);
 }
 
 _ supported_interfaces() method_id {
@@ -257,13 +154,12 @@ _ supported_interfaces() method_id {
         "org.ton.introspection.v0"H >> 128,
         "org.ton.abi.ipfs.v0"H >> 128,
         "org.ton.deploy.lazy.v0"H >> 128,
-        "org.ton.chain.workchain.v0"H >> 128,
-        "org.ton.ownable"H >> 128
+        "org.ton.chain.workchain.v0"H >> 128
     );
 }
 
 _ get_abi_ipfs() method_id {
-    return "ipfs://QmcGujvwDFx5MAoSurHqecF4ufxm6w3VcTYQepNkEnqwMW";
+    return "ipfs://QmbR1AVg8BgL7q3WvwEUTAqjJ6d1LrRsCG7s8FVmoqJLCY";
 }
 
 _ lazy_deployment_completed() method_id {
@@ -274,7 +170,7 @@ _ lazy_deployment_completed() method_id {
 ;; Routing of a Contract ClaimMaster
 ;;
 
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_contract_router_internal((int, slice, int, slice, slice, int, int, int, int) self, int msg_bounced, slice in_msg) impure inline_ref {
+((slice, int, slice, slice, int, int, int), int) $ClaimMaster$_contract_router_internal((slice, int, slice, slice, int, int, int) self, int msg_bounced, slice in_msg) impure inline_ref {
     ;; Handle bounced messages
     if (msg_bounced) {
         return (self, true);
@@ -287,45 +183,10 @@ _ lazy_deployment_completed() method_id {
     }
     
     
-    ;; Receive ChangeOwner message
-    if (op == 2174598809) {
-        var msg = in_msg~$ChangeOwner$_load();
-        self~$ClaimMaster$_internal_binary_ChangeOwner(msg);
-        return (self, true);
-    }
-    
-    ;; Receive CustomMessage message
-    if (op == 9) {
-        var msg = in_msg~$CustomMessage$_load();
-        self~$ClaimMaster$_internal_binary_CustomMessage(msg);
-        return (self, true);
-    }
-    
-    ;; Receive SetCode message
-    if (op == 19) {
-        var msg = in_msg~$SetCode$_load();
-        self~$ClaimMaster$_internal_binary_SetCode(msg);
-        return (self, true);
-    }
-    
-    ;; Receive TokenNotification message
-    if (op == 1935855772) {
-        var msg = in_msg~$TokenNotification$_load();
-        self~$ClaimMaster$_internal_binary_TokenNotification(msg);
-        return (self, true);
-    }
-    
-    ;; Receive MintChildWithClaim message
+    ;; Receive Mint message
     if (op == 1) {
-        var msg = in_msg~$MintChildWithClaim$_load();
-        self~$ClaimMaster$_internal_binary_MintChildWithClaim(msg);
-        return (self, true);
-    }
-    
-    ;; Receive MintChildNoClaim message
-    if (op == 17) {
-        var msg = in_msg~$MintChildNoClaim$_load();
-        self~$ClaimMaster$_internal_binary_MintChildNoClaim(msg);
+        var msg = in_msg~$Mint$_load();
+        self~$ClaimMaster$_internal_binary_Mint(msg);
         return (self, true);
     }
     
@@ -343,23 +204,37 @@ _ lazy_deployment_completed() method_id {
         return (self, true);
     }
     
-    ;; Receive TokenConfig message
+    ;; Receive MasterConfig message
     if (op == 8) {
-        var msg = in_msg~$TokenConfig$_load();
-        self~$ClaimMaster$_internal_binary_TokenConfig(msg);
+        var msg = in_msg~$MasterConfig$_load();
+        self~$ClaimMaster$_internal_binary_MasterConfig(msg);
+        return (self, true);
+    }
+    
+    ;; Receive ChangeMinter message
+    if (op == 18) {
+        var msg = in_msg~$ChangeMinter$_load();
+        self~$ClaimMaster$_internal_binary_ChangeMinter(msg);
+        return (self, true);
+    }
+    
+    ;; Receive CustomMessage message
+    if (op == 9) {
+        var msg = in_msg~$CustomMessage$_load();
+        self~$ClaimMaster$_internal_binary_CustomMessage(msg);
+        return (self, true);
+    }
+    
+    ;; Receive TokenNotification message
+    if (op == 1935855772) {
+        var msg = in_msg~$TokenNotification$_load();
+        self~$ClaimMaster$_internal_binary_TokenNotification(msg);
         return (self, true);
     }
     
     ;; Receive empty message
     if ((op == 0) & (slice_bits(in_msg) <= 32)) {
         self~%$ClaimMaster$_internal_empty();
-        return (self, true);
-    }
-    
-    ;; Receive TokenExcesses message
-    if (op == 3576854235) {
-        var msg = in_msg~$TokenExcesses$_load();
-        self~$ClaimMaster$_internal_binary_TokenExcesses(msg);
         return (self, true);
     }
     

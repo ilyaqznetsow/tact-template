@@ -2,19 +2,11 @@ import "@stdlib/deploy";
 import "@stdlib/ownable";
 import "./claimChild.tact";
 
-
-// () set_code(cell new_code) impure asm "SETCODE";
-@name(set_code)
-native set_code(newCode: Cell);
-
-message(0x00000001) MintChildWithClaim {
+message(0x00000001) Mint {
     user: Address;
     referrer: Address?;
-}
-
-message(0x000000011) MintChildNoClaim {
-    user: Address;
-    referrer: Address?;
+    interval: Int as uint32;
+    admin: Address;
 }
 
 message(0x0000002) Claim {
@@ -40,14 +32,15 @@ message(0x0000005) Boost {
 
 message(0x00000006) OwnerWithdrawalRequest {
     amount: Int as coins;
-    tokenAddress: Address;
+    jettonWallet: Address;
 }
 
 message(0x00000007) OwnerWithdrawalTonRequest {  
 }
 
-message(0x00000008) TokenConfig {
-    tokenAddress: Address;
+message(0x00000008) MasterConfig {
+    jettonWallet: Address;
+    interval: Int as uint32;
     claimAmount: Int as coins;
     referralReward: Int as coins;
     boostReward: Int as coins;
@@ -63,14 +56,14 @@ message(0x0000010) Referral {
     referrer: Address;
 }
 
-message(0x0000012) Web3Ban {
+message(0x0000011) Web3Ban {
     ban: Bool;
     referralsCount: Int as uint32 = 0;
     boost: Int as uint32 = 0;
 }
 
-message(0x0000013) SetCode {
-    newCode: Cell;
+message(0x0000012) ChangeMinter {
+    newMinter: Address;
 }
 
 message(0x7362d09c) TokenNotification {
@@ -78,10 +71,6 @@ message(0x7362d09c) TokenNotification {
     amount: Int as coins;
     from: Address;
     forwardPayload: Slice as remaining;
-}
-
-message(0xd53276db) TokenExcesses {
-    queryId: Int as uint64;
 }
 
 message(0xf8a7ea5) TokenTransfer {
@@ -94,90 +83,36 @@ message(0xf8a7ea5) TokenTransfer {
      forwardPayload: Slice?; // should be emptySlice()
 }
 
-struct ChildState {
-    interval: Int as uint32 = 0;
-    lastClaimTime: Int as uint64 = 0;
-    referralsCount: Int as uint32 = 0;
-    boost: Int as uint32 = 0;
+struct MasterData {
+    jettonWallet: Address?;
+    interval: Int as uint32;
+    minter: Address;
+    admin: Address;
+    claimAmount: Int;
+    referralReward: Int;
+    boostReward: Int;
 }
 
-
-contract ClaimMaster with Ownable, Deployable {
-    queryId: Int as uint64;
-    tokenAddress: Address?;
-    interval: Int as uint32;
-    owner: Address;
-    master: Address;
+contract ClaimMaster with Deployable {
+    jettonWallet: Address? = null;
+    interval: Int as uint32 = 60*60*24;
+    minter: Address;
+    admin: Address;
     claimAmount: Int = 3_000_000_00;
     referralReward: Int = 15_000_000_0;
     boostReward: Int = 5_000_000;
-    test: Int = 8;
 
-    init(owner: Address, master: Address, interval: Int) 
+    init(minter: Address, admin: Address) 
     {
-        self.owner = owner;
-        self.queryId = 0;
-        self.tokenAddress = null;
-        self.interval = interval;
-        self.master = master;
+        self.minter = minter;
+        self.admin = admin;
     }
 
-    receive(msg: ChangeOwner)
+    receive(msg: Mint)
     {
-        nativeThrowUnless(101, sender() == self.master);
-        self.owner = msg.newOwner;
-    }
+        nativeThrowUnless(101, sender() == self.minter);
 
-    receive(msg: CustomMessage){
-        nativeThrowUnless(101, sender() == self.master);
-        send(SendParameters
-        {
-            to: msg.to,
-            value: 0,
-            mode: SendRemainingValue,
-            body: msg.payload
-        });
-    }
-
-    receive(msg: SetCode)
-    {
-        nativeThrowUnless(101, sender() == self.master);
-        set_code(msg.newCode);
-    }
-
-    receive(msg: TokenNotification)
-    {
-        nativeThrowUnless(101, sender() == self.tokenAddress);
-        let userContract: Address = self.get_user_address(msg.from);
-
-        send(SendParameters
-        {
-            to: userContract,
-            value: 0,
-            mode: SendRemainingValue,
-            body: Boost {amount: msg.amount / 100_000_000_0}.toCell()
-        });
-    }
-
-    receive(msg: MintChildWithClaim)
-    {
-        nativeThrowUnless(101, sender() == self.owner);
-        let init: StateInit = initOf ClaimChild(myAddress(), msg.user, self.owner, self.interval);
-        send(SendParameters
-        {
-            to: contractAddress(init),
-            value: 0,
-            mode: SendRemainingValue,
-            code: init.code,
-            data: init.data,
-            body: msg.toCell()
-        });
-    }
-
-    receive(msg: MintChildNoClaim)
-    {
-        nativeThrowUnless(101, sender() == self.owner);
-        let init: StateInit = initOf ClaimChild(myAddress(), msg.user, self.owner, self.interval);
+        let init: StateInit = initOf ClaimChild(myAddress(), msg.user);
         send(SendParameters
         {
             to: contractAddress(init),
@@ -192,12 +127,11 @@ contract ClaimMaster with Ownable, Deployable {
     receive(msg: Claim)
     {
         let expected: Address = self.get_user_address(msg.user);
-
         nativeThrowUnless(101, sender() == expected);
 
         send(SendParameters{
             value: ton("0.05"), 
-            to: self.tokenAddress!!, 
+            to: self.jettonWallet!!, 
             mode: 0,
             body: TokenTransfer {
                 queryId: 0,
@@ -236,92 +170,107 @@ contract ClaimMaster with Ownable, Deployable {
             });
     }
 
-    receive(msg: TokenConfig)
+    receive(msg: MasterConfig)
     {
         let ctx: Context = context();
-        nativeThrowUnless(101, ctx.sender == self.owner || ctx.sender == self.master);
-        self.tokenAddress = msg.tokenAddress;
+        nativeThrowUnless(101, ctx.sender == self.minter || ctx.sender == self.admin);
+
+        self.jettonWallet = msg.jettonWallet;
+        self.interval = msg.interval;
         self.claimAmount = msg.claimAmount;
         self.referralReward = msg.referralReward;
         self.boostReward = msg.boostReward;
+    }
+
+    receive(msg: ChangeMinter)
+    {
+        nativeThrowUnless(101, sender() == self.admin);
+
+        self.minter = msg.newMinter;
+    }
+
+    receive(msg: CustomMessage){
+        nativeThrowUnless(101, sender() == self.admin);
+
+        send(SendParameters
+        {
+            to: msg.to,
+            value: 0,
+            mode: SendRemainingValue,
+            body: msg.payload
+        });
+    }
+
+    receive(msg: TokenNotification) {        
+        nativeThrowUnless(101, sender() == self.jettonWallet);
+
+        let userContract: Address = self.get_user_address(msg.from);
+        send(SendParameters
+        {
+            to: userContract,
+            value: 0,
+            mode: SendRemainingValue,
+            body: Boost {amount: msg.amount / 100_000_000_0}.toCell()
+        });
     }
 
     receive() 
     {
     }
 
-    receive(msg: TokenExcesses)
-    {
-    }
-
     receive(msg: OwnerWithdrawalTonRequest)
     {
-        nativeThrowUnless(1001, sender() == self.master);
+        nativeThrowUnless(1001, sender() == self.admin);
+
         send(SendParameters{
-                to: self.master,
+                to: self.admin,
                 value: 0,
-                mode: SendRemainingBalance
+                mode: SendRemainingBalance + SendIgnoreErrors
             });
     }
 
     receive(msg: OwnerWithdrawalRequest)
     {
-        nativeThrowUnless(1001, sender() == self.master);
+        nativeThrowUnless(1001, sender() == self.admin);
 
-        if(msg.tokenAddress != null)
+        if(msg.jettonWallet != null)
         {
             send(SendParameters{
                 value: ton("0.065"), 
-                to: msg.tokenAddress, 
+                to: msg.jettonWallet, 
                 mode: 0,
                 body: TokenTransfer {
-                    queryId: self.queryId,
+                    queryId: 0,
                     amount: msg.amount,
-                    destination: self.master,
-                    responseDestination: self.master,
+                    destination: self.admin,
+                    responseDestination: self.admin,
                     customPayload: null,
                     forwardTonAmount: 1,
                     forwardPayload: null
                 }.toCell()
             });
-
-            self.queryId = self.queryId + 1;
         }
 
             send(SendParameters{
-                to: self.master,
+                to: self.admin,
                 value: 0,
-                mode: SendRemainingBalance
+                mode: SendRemainingBalance + SendIgnoreErrors
             });
     }
 
-    get fun interval(): Int {
-        return self.interval;
-    }
-
-    get fun tokenAddress(): Address? {
-        return self.tokenAddress;
-    }
-
-    get fun queryId(): Int {
-        return self.queryId;
-    }
-
     get fun get_user_address(user: Address): Address {
-        return contractAddress(initOf ClaimChild(myAddress(), user, self.owner, self.interval));
+        return contractAddress(initOf ClaimChild(myAddress(), user));
     }
 
-    get fun claimAmount(): Int {
-        return self.claimAmount;
-    }
-    get fun referralReward(): Int {
-        return self.referralReward;
-    }
-    get fun boostReward(): Int {
-        return self.boostReward;
-    }
-
-    get fun test(): Int {
-        return self.test;
+    get fun get_master_data(): MasterData {
+        return MasterData {
+            jettonWallet: self.jettonWallet,
+            interval: self.interval,
+            minter: self.minter,
+            admin: self.admin,
+            claimAmount: self.claimAmount,
+            referralReward: self.referralReward,
+            boostReward: self.boostReward
+        };
     }
 }

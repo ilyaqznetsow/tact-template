@@ -147,8 +147,8 @@ slice $global_contractAddress((cell, cell) $s) impure inline {
     send_raw_message($c, $params'mode);
 }
 
-((int, slice, int, slice, slice, int, int, int, int), ()) $ClaimMaster$_fun_forward((int, slice, int, slice, slice, int, int, int, int) $self, slice $to, cell $body, int $bounce, tuple $init) impure inline {
-    var (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)) = $self;
+((slice, int, slice, slice, int, int, int), ()) $ClaimMaster$_fun_forward((slice, int, slice, slice, int, int, int) $self, slice $to, cell $body, int $bounce, tuple $init) impure inline {
+    var (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward)) = $self;
     var ($init) = $init;
     cell $code = null();
     cell $data = null();
@@ -164,15 +164,15 @@ slice $global_contractAddress((cell, cell) $s) impure inline {
         if (($balanceBeforeMessage < 0)) {
             raw_reserve(0, 0);
             $global_send($SendParameters$_constructor_bounce_to_value_mode_body_code_data($bounce, $to, 0, (128 + 2), $body, $code, $data));
-            return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
+            return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
         }
     }
     $global_send($SendParameters$_constructor_bounce_to_value_mode_body_code_data($bounce, $to, 0, (64 + 2), $body, $code, $data));
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
 }
 
-((int, slice, int, slice, slice, int, int, int, int), ()) $ClaimMaster$_fun_notify((int, slice, int, slice, slice, int, int, int, int) $self, cell $body) impure inline {
-    var (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)) = $self;
-    ($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test)~$ClaimMaster$_fun_forward(__tact_context_get_sender(), $body, false, null());
-    return (($self'queryId, $self'tokenAddress, $self'interval, $self'owner, $self'master, $self'claimAmount, $self'referralReward, $self'boostReward, $self'test), ());
+((slice, int, slice, slice, int, int, int), ()) $ClaimMaster$_fun_notify((slice, int, slice, slice, int, int, int) $self, cell $body) impure inline {
+    var (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward)) = $self;
+    ($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward)~$ClaimMaster$_fun_forward(__tact_context_get_sender(), $body, false, null());
+    return (($self'jettonWallet, $self'interval, $self'minter, $self'admin, $self'claimAmount, $self'referralReward, $self'boostReward), ());
 }

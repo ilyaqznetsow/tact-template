@@ -9,7 +9,7 @@ import { randomInt } from "crypto";
     // Parameters
     let testnet = true;
     let packageName = "GM_ClaimMaster.pkg";
-    let owner = Address.parse("UQBi8I_It4oENAaQOS-XSj2JYRJgUUhFvr_daAdkwpo9ALJ2");
+    let owner = Address.parse("0QBi8I_It4oENAaQOS-XSj2JYRJgUUhFvr_daAdkwpo9AAn8");
     let master = Address.parse("0QCJ81a9ELPIYJGHxavNe7HVhAx_iojnPev_jmT_2PEgEO7T");;
 
     let init = await ClaimMaster.init(master, master, BigInt(60*3));

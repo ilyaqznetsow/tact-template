@@ -18,13 +18,9 @@ PROGRAM{
   DECLPROC $Deploy$_load
   DECLPROC $DeployOk$_store
   DECLPROC $DeployOk$_store_cell
-  DECLPROC $ChangeOwner$_load
-  DECLPROC $MintChildWithClaim$_store
-  DECLPROC $MintChildWithClaim$_store_cell
-  DECLPROC $MintChildWithClaim$_load
-  DECLPROC $MintChildNoClaim$_store
-  DECLPROC $MintChildNoClaim$_store_cell
-  DECLPROC $MintChildNoClaim$_load
+  DECLPROC $Mint$_store
+  DECLPROC $Mint$_store_cell
+  DECLPROC $Mint$_load
   DECLPROC $Claim$_load
   DECLPROC $AddReferral$_store
   DECLPROC $AddReferral$_store_cell
@@ -33,16 +29,16 @@ PROGRAM{
   DECLPROC $Boost$_store_cell
   DECLPROC $OwnerWithdrawalRequest$_load
   DECLPROC $OwnerWithdrawalTonRequest$_load
-  DECLPROC $TokenConfig$_load
+  DECLPROC $MasterConfig$_load
   DECLPROC $CustomMessage$_load
-  DECLPROC $SetCode$_load
+  DECLPROC $ChangeMinter$_load
   DECLPROC $TokenNotification$_load
-  DECLPROC $TokenExcesses$_load
   DECLPROC $TokenTransfer$_store
   DECLPROC $TokenTransfer$_store_cell
   DECLPROC $ClaimMaster$_store
   DECLPROC $ClaimMaster$_load
   DECLPROC $StateInit$_not_null
+  DECLPROC $MasterData$_to_external
   DECLPROC $ClaimChild$init$_store
   DECLPROC $ClaimMaster$init$_load
   DECLPROC $ClaimMaster$_contract_init
@@ -52,48 +48,32 @@ PROGRAM{
   DECLPROC $global_send
   DECLPROC $ClaimChild$_init_child
   DECLPROC $SendParameters$_constructor_bounce_to_value_mode_body_code_data
-  DECLPROC $ClaimMaster$_fun_interval
-  DECLPROC $ClaimMaster$_fun_tokenAddress
-  DECLPROC $ClaimMaster$_fun_queryId
   DECLPROC $ClaimMaster$_fun_get_user_address
-  DECLPROC $ClaimMaster$_fun_claimAmount
-  DECLPROC $ClaimMaster$_fun_referralReward
-  DECLPROC $ClaimMaster$_fun_boostReward
-  DECLPROC $ClaimMaster$_fun_test
+  DECLPROC $MasterData$_constructor_jettonWallet_interval_minter_admin_claimAmount_referralReward_boostReward
+  DECLPROC $ClaimMaster$_fun_get_master_data
   DECLPROC $ClaimMaster$_fun_forward
   DECLPROC $ClaimMaster$_fun_notify
-  DECLPROC $ClaimMaster$_fun_owner
-  DECLPROC $SendParameters$_constructor_to_value_mode_body
-  DECLPROC $Boost$_constructor_amount
   DECLPROC $SendParameters$_constructor_to_value_mode_code_data_body
   DECLPROC $SendParameters$_constructor_value_to_mode_body
   DECLPROC $TokenTransfer$_constructor_queryId_amount_destination_responseDestination_customPayload_forwardTonAmount_forwardPayload
   DECLPROC $AddReferral$_constructor_from_to
+  DECLPROC $SendParameters$_constructor_to_value_mode_body
+  DECLPROC $Boost$_constructor_amount
   DECLPROC $SendParameters$_constructor_to_value_mode
   DECLPROC $DeployOk$_constructor_queryId
-  DECLPROC $ClaimMaster$_internal_binary_ChangeOwner
-  DECLPROC $ClaimMaster$_internal_binary_CustomMessage
-  DECLPROC $ClaimMaster$_internal_binary_SetCode
-  DECLPROC $ClaimMaster$_internal_binary_TokenNotification
-  DECLPROC $ClaimMaster$_internal_binary_MintChildWithClaim
-  DECLPROC $ClaimMaster$_internal_binary_MintChildNoClaim
+  DECLPROC $ClaimMaster$_internal_binary_Mint
   DECLPROC $ClaimMaster$_internal_binary_Claim
   DECLPROC $ClaimMaster$_internal_binary_AddReferral
-  DECLPROC $ClaimMaster$_internal_binary_TokenConfig
+  DECLPROC $ClaimMaster$_internal_binary_MasterConfig
+  DECLPROC $ClaimMaster$_internal_binary_ChangeMinter
+  DECLPROC $ClaimMaster$_internal_binary_CustomMessage
+  DECLPROC $ClaimMaster$_internal_binary_TokenNotification
   DECLPROC %$ClaimMaster$_internal_empty
-  DECLPROC $ClaimMaster$_internal_binary_TokenExcesses
   DECLPROC $ClaimMaster$_internal_binary_OwnerWithdrawalTonRequest
   DECLPROC $ClaimMaster$_internal_binary_OwnerWithdrawalRequest
   DECLPROC $ClaimMaster$_internal_binary_Deploy
-  97297 DECLMETHOD %interval
-  106685 DECLMETHOD %tokenAddress
-  94948 DECLMETHOD %queryId
   102784 DECLMETHOD %get_user_address
-  72575 DECLMETHOD %claimAmount
-  71076 DECLMETHOD %referralReward
-  78416 DECLMETHOD %boostReward
-  105222 DECLMETHOD %test
-  83229 DECLMETHOD %owner
+  84263 DECLMETHOD %get_master_data
   113617 DECLMETHOD supported_interfaces
   121275 DECLMETHOD get_abi_ipfs
   115390 DECLMETHOD lazy_deployment_completed
@@ -252,32 +232,25 @@ PROGRAM{
     $DeployOk$_store INLINECALLDICT
     ENDC
   }>
-  $ChangeOwner$_load PROCINLINE:<{
-    32 LDU
-    SWAP
-    2174598809 PUSHINT
-    EQUAL
-    129 THROWIFNOT
-    64 LDU
-    __tact_load_address INLINECALLDICT
-    s1 s2 XCHG
-  }>
-  $MintChildWithClaim$_store PROCINLINE:<{
+  $Mint$_store PROCINLINE:<{
     1 PUSHINT
-    s0 s3 XCHG2
+    s0 s5 XCHG2
     32 STU
-    SWAP
+    s0 s3 XCHG2
     __tact_store_address INLINECALLDICT
     SWAP
     __tact_store_address_opt INLINECALLDICT
+    32 STU
+    SWAP
+    __tact_store_address INLINECALLDICT
   }>
-  $MintChildWithClaim$_store_cell PROCINLINE:<{
+  $Mint$_store_cell PROCINLINE:<{
     NEWC
-    -ROT
-    $MintChildWithClaim$_store INLINECALLDICT
+    4 -ROLL
+    $Mint$_store INLINECALLDICT
     ENDC
   }>
-  $MintChildWithClaim$_load PROCINLINE:<{
+  $Mint$_load PROCINLINE:<{
     32 LDU
     SWAP
     1 EQINT
@@ -285,32 +258,11 @@ PROGRAM{
     __tact_load_address INLINECALLDICT
     SWAP
     __tact_load_address_opt INLINECALLDICT
-    s1 s2 XCHG
-  }>
-  $MintChildNoClaim$_store PROCINLINE:<{
-    17 PUSHINT
-    s0 s3 XCHG2
-    32 STU
     SWAP
-    __tact_store_address INLINECALLDICT
-    SWAP
-    __tact_store_address_opt INLINECALLDICT
-  }>
-  $MintChildNoClaim$_store_cell PROCINLINE:<{
-    NEWC
-    -ROT
-    $MintChildNoClaim$_store INLINECALLDICT
-    ENDC
-  }>
-  $MintChildNoClaim$_load PROCINLINE:<{
     32 LDU
-    SWAP
-    17 EQINT
-    129 THROWIFNOT
     __tact_load_address INLINECALLDICT
-    SWAP
-    __tact_load_address_opt INLINECALLDICT
-    s1 s2 XCHG
+    s1 s4 XCHG
+    s3 s3 s0 XCHG3
   }>
   $Claim$_load PROCINLINE:<{
     32 LDU
@@ -378,17 +330,18 @@ PROGRAM{
     129 THROWIFNOT
     PUSHNULL
   }>
-  $TokenConfig$_load PROCINLINE:<{
+  $MasterConfig$_load PROCINLINE:<{
     32 LDU
     SWAP
     8 EQINT
     129 THROWIFNOT
     __tact_load_address INLINECALLDICT
     SWAP
+    32 LDU
     LDGRAMS
     LDGRAMS
     LDGRAMS
-    4 -ROLL
+    5 -ROLL
   }>
   $CustomMessage$_load PROCINLINE:<{
     32 LDU
@@ -407,13 +360,12 @@ PROGRAM{
     }>
     -ROT
   }>
-  $SetCode$_load PROCINLINE:<{
+  $ChangeMinter$_load PROCINLINE:<{
     32 LDU
     SWAP
-    19 EQINT
+    18 EQINT
     129 THROWIFNOT
-    LDREF
-    SWAP
+    __tact_load_address INLINECALLDICT
   }>
   $TokenNotification$_load PROCINLINE:<{
     32 LDU
@@ -426,15 +378,6 @@ PROGRAM{
     __tact_load_address INLINECALLDICT
     s3 s0 s3 XC2PU
     s2 s3 XCHG
-  }>
-  $TokenExcesses$_load PROCINLINE:<{
-    32 LDU
-    SWAP
-    3576854235 PUSHINT
-    EQUAL
-    129 THROWIFNOT
-    64 LDU
-    SWAP
   }>
   $TokenTransfer$_store PROCREF:<{
     260734629 PUSHINT
@@ -489,9 +432,7 @@ PROGRAM{
     ENDC
   }>
   $ClaimMaster$_store PROCINLINE:<{
-    s8 s9 XCHG2
-    64 STU
-    s0 s6 XCHG2
+    s7 s6 XCHG2
     __tact_store_address_opt INLINECALLDICT
     s1 s4 XCHG
     32 STU
@@ -503,25 +444,16 @@ PROGRAM{
     NEWC
     257 PUSHINT
     STIX
-    s1 s2 XCHG
+    s1 s3 XCHG
     257 PUSHINT
     STIX
-    s1 s2 XCHG
     257 PUSHINT
     STIX
-    s0 s2 XCHG
-    NEWC
-    257 PUSHINT
-    STIX
-    ENDC
-    ROT
-    STREF
     ENDC
     SWAP
     STREF
   }>
   $ClaimMaster$_load PROCINLINE:<{
-    64 LDU
     __tact_load_address_opt INLINECALLDICT
     SWAP
     32 LDU
@@ -538,17 +470,11 @@ PROGRAM{
     LDIX
     257 PUSHINT
     LDIX
-    LDREF
     DROP
-    CTOS
-    257 PUSHINT
-    LDIX
-    DROP
-    s4 s9 XCHG
-    s4 s8 XCHG
-    s4 s7 XCHG
-    s4 s6 XCHG
-    s4 s5 XCHG
+    s3 s7 XCHG
+    s3 s6 XCHG
+    s3 s5 XCHG
+    s3 s4 XCHG
   }>
   $StateInit$_not_null PROCINLINE:<{
     DUP
@@ -556,40 +482,27 @@ PROGRAM{
     128 THROWIF
     2 UNTUPLE
   }>
+  $MasterData$_to_external PROCINLINE:<{
+  }>
   $ClaimChild$init$_store PROCINLINE:<{
-    s4 s3 XCHG2
+    -ROT
     __tact_store_address INLINECALLDICT
     SWAP
     __tact_store_address INLINECALLDICT
-    ROT
-    __tact_store_address INLINECALLDICT
-    SWAP
-    NEWC
-    257 PUSHINT
-    STIX
-    ENDC
-    SWAP
-    STREF
   }>
   $ClaimMaster$init$_load PROCINLINE:<{
     __tact_load_address INLINECALLDICT
     SWAP
     __tact_load_address INLINECALLDICT
-    SWAP
-    257 PUSHINT
-    LDIX
-    3 -ROLL
+    s1 s2 XCHG
   }>
   $ClaimMaster$_contract_init PROCREF:<{
+    PUSHNULL
+    86400 PUSHINT
+    2SWAP
     300000000 PUSHINT
     150000000 PUSHINT
     5000000 PUSHINT
-    8 PUSHINT
-    0 PUSHINT
-    s0 s7 XCHG
-    PUSHNULL
-    s0 s7 XCHG
-    4 2 BLKSWAP
   }>
   $ClaimMaster$_contract_load PROCREF:<{
     c4 PUSH
@@ -601,7 +514,7 @@ PROGRAM{
     SWAP
     IFJMP:<{
       $ClaimMaster$_load INLINECALLDICT
-      1 9 BLKDROP2
+      1 7 BLKDROP2
     }>
     MYADDR
     11 PLDU
@@ -609,9 +522,9 @@ PROGRAM{
     EQUAL
     137 THROWIFNOT
     $ClaimMaster$init$_load INLINECALLDICT
-    s0 s3 XCHG
+    s0 s2 XCHG
     ENDS
-    ROT
+    SWAP
     $ClaimMaster$_contract_init INLINECALLDICT
   }>
   $ClaimMaster$_contract_store PROCINLINE:<{
@@ -622,7 +535,7 @@ PROGRAM{
     TRUE
     SWAP
     1 STI
-    9 -ROLL
+    7 -ROLL
     $ClaimMaster$_store INLINECALLDICT
     ENDC
     c4 POP
@@ -735,7 +648,7 @@ PROGRAM{
     SENDRAWMSG
   }>
   $ClaimChild$_init_child PROCINLINE:<{
-    s0 s4 XCHG
+    s0 s2 XCHG
     CTOS
     LDDICT
     DROP
@@ -757,41 +670,26 @@ PROGRAM{
     FALSE
     SWAP
     1 STI
-    4 -ROLL
-    s0 s5 XCHG
+    s0 s0 s3 XCHG3
     $ClaimChild$init$_store INLINECALLDICT
     ENDC
   }>
   $SendParameters$_constructor_bounce_to_value_mode_body_code_data PROCINLINE:<{
   }>
-  $ClaimMaster$_fun_interval PROCINLINE:<{
-    s6 PUSH
-  }>
-  $ClaimMaster$_fun_tokenAddress PROCINLINE:<{
-    s7 PUSH
-  }>
-  $ClaimMaster$_fun_queryId PROCINLINE:<{
-    s8 PUSH
-  }>
   $ClaimMaster$_fun_get_user_address PROCINLINE:<{
     __tact_context_sys GETGLOB
     MYADDR
-    s0 s2 s8 XC2PU
-    s10 PUSH
+    ROT
     $ClaimChild$_init_child INLINECALLDICT
     $global_contractAddress INLINECALLDICT
   }>
-  $ClaimMaster$_fun_claimAmount PROCINLINE:<{
-    s3 PUSH
+  $MasterData$_constructor_jettonWallet_interval_minter_admin_claimAmount_referralReward_boostReward PROCINLINE:<{
   }>
-  $ClaimMaster$_fun_referralReward PROCINLINE:<{
-    s2 PUSH
-  }>
-  $ClaimMaster$_fun_boostReward PROCINLINE:<{
-    OVER
-  }>
-  $ClaimMaster$_fun_test PROCINLINE:<{
-    DUP
+  $ClaimMaster$_fun_get_master_data PROCINLINE:<{
+    s6 s5 s4 PUSH3
+    s6 s5 s4 PUSH3
+    s6 PUSH
+    $MasterData$_constructor_jettonWallet_interval_minter_admin_claimAmount_referralReward_boostReward INLINECALLDICT
   }>
   $ClaimMaster$_fun_forward PROCINLINE:<{
     PUSHNULL
@@ -822,17 +720,6 @@ PROGRAM{
     PUSHNULL
     $ClaimMaster$_fun_forward INLINECALLDICT
   }>
-  $ClaimMaster$_fun_owner PROCINLINE:<{
-    s5 PUSH
-  }>
-  $SendParameters$_constructor_to_value_mode_body PROCINLINE:<{
-    TRUE
-    4 -ROLL
-    PUSHNULL
-    PUSHNULL
-  }>
-  $Boost$_constructor_amount PROCINLINE:<{
-  }>
   $SendParameters$_constructor_to_value_mode_code_data_body PROCINLINE:<{
     TRUE
     s0 s6 XCHG
@@ -850,6 +737,14 @@ PROGRAM{
   }>
   $AddReferral$_constructor_from_to PROCINLINE:<{
   }>
+  $SendParameters$_constructor_to_value_mode_body PROCINLINE:<{
+    TRUE
+    4 -ROLL
+    PUSHNULL
+    PUSHNULL
+  }>
+  $Boost$_constructor_amount PROCINLINE:<{
+  }>
   $SendParameters$_constructor_to_value_mode PROCINLINE:<{
     TRUE
     3 -ROLL
@@ -859,17 +754,153 @@ PROGRAM{
   }>
   $DeployOk$_constructor_queryId PROCINLINE:<{
   }>
-  $ClaimMaster$_internal_binary_ChangeOwner PROCINLINE:<{
-    NIP
-    s6 POP
+  $ClaimMaster$_internal_binary_Mint PROCINLINE:<{
     __tact_context_get_sender INLINECALLDICT
-    s5 s(-1) PUXC
+    s9 s(-1) PUXC
+    __tact_slice_eq_bits INLINECALLDICT
+    101 THROWIFNOT
+    __tact_context_sys GETGLOB
+    MYADDR
+    s5 PUSH
+    $ClaimChild$_init_child INLINECALLDICT
+    2DUP
+    $global_contractAddress INLINECALLDICT
+    s1 s6 XCHG
+    0 PUSHINT
+    s6 s5 XCHG2
+    64 PUSHINT
+    s0 s5 XCHG
+    $Mint$_store_cell INLINECALLDICT
+    s4 s5 XCHG
+    s3 s4 XCHG
+    s1 s3 s0 XCHG3
+    $SendParameters$_constructor_to_value_mode_code_data_body INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
+  $ClaimMaster$_internal_binary_Claim PROCINLINE:<{
+    s6 s10 XCHG
+    s5 s9 XCHG
+    s4 s8 XCHG
+    s3 s7 XCHG
+    s10 s9 s8 XCHG3
+    s9 PUSH
+    $ClaimMaster$_fun_get_user_address INLINECALLDICT
+    __tact_context_get_sender INLINECALLDICT
+    __tact_slice_eq_bits INLINECALLDICT
+    101 THROWIFNOT
+    50000000 PUSHINT
+    s7 PUSH
+    __tact_not_null INLINECALLDICT
+    0 PUSHINT
+    s0 s10 s4 PUXCPU
+    MUL
+    s6 s(-1) PUXC
+    ADD
+    s14 s4 XCPU
+    MUL
+    s1 s14 XCHG
+    ADD
+    MYADDR
+    s13 PUSH
+    s3 s12 XCHG
+    SWAP
+    PUSHNULL
+    1 PUSHINT
+    PUSHNULL
+    $TokenTransfer$_constructor_queryId_amount_destination_responseDestination_customPayload_forwardTonAmount_forwardPayload INLINECALLDICT
+    $TokenTransfer$_store_cell INLINECALLDICT
+    s9 s3 s0 XCHG3
+    s1 s12 XCHG
+    $SendParameters$_constructor_value_to_mode_body INLINECALLDICT
+    $global_send INLINECALLDICT
+    s6 PUSH
+    ISNULL
+    NOT
+    IF:<{
+      s6 PUSH
+      __tact_not_null INLINECALLDICT
+      s5 s7 XCHG
+      s4 s6 XCHG
+      s3 s5 XCHG
+      s4 s3 s0 XCHG3
+      s9 s9 s0 XCHG3
+      $ClaimMaster$_fun_get_user_address INLINECALLDICT
+      0 PUSHINT
+      64 PUSHINT
+      s0 s11 XCHG
+      __tact_not_null INLINECALLDICT
+      s1 s10 XCHG
+      $AddReferral$_constructor_from_to INLINECALLDICT
+      $AddReferral$_store_cell INLINECALLDICT
+      s3 s9 XCHG
+      s1 s10 s0 XCHG3
+      $SendParameters$_constructor_value_to_mode_body INLINECALLDICT
+      $global_send INLINECALLDICT
+      s4 s5 s4 XCHG3
+      s1 s6 XCHG
+      s1 s3 XCHG
+    }>ELSE<{
+      s6 POP
+      s6 POP
+    }>
+    s6 s1 s4 XCHG3
+    s0 s0 s5 XCHG3
+    s0 s3 XCHG
+  }>
+  $ClaimMaster$_internal_binary_AddReferral PROCINLINE:<{
+    s6 s8 XCHG
+    5 4 REVERSE
+    s3 s7 XCHG
+    s8 s7 s8 XCHG3
+    s7 PUSH
+    $ClaimMaster$_fun_get_user_address INLINECALLDICT
+    __tact_context_get_sender INLINECALLDICT
+    __tact_slice_eq_bits INLINECALLDICT
+    101 THROWIFNOT
+    s8 PUSH
+    $ClaimMaster$_fun_get_user_address INLINECALLDICT
+    0 PUSHINT
+    s0 s9 XCHG
+    64 PUSHINT
+    s0 s11 XCHG
+    $AddReferral$_store_cell INLINECALLDICT
+    s3 s9 XCHG
+    s1 s10 s0 XCHG3
+    $SendParameters$_constructor_value_to_mode_body INLINECALLDICT
+    $global_send INLINECALLDICT
+    s4 s6 XCHG
+    2 4 BLKSWAP
+  }>
+  $ClaimMaster$_internal_binary_MasterConfig PROCINLINE:<{
+    s5 POP
+    s5 POP
+    s5 POP
+    s7 POP
+    s7 POP
+    __tact_context_get INLINECALLDICT
+    s2 s3 XCHG
+    3 BLKDROP
+    s5 s0 PUSH2
+    __tact_slice_eq_bits INLINECALLDICT
+    IF:<{
+      DROP
+      TRUE
+    }>ELSE<{
+      s4 s(-1) PUXC
+      __tact_slice_eq_bits INLINECALLDICT
+    }>
+    101 THROWIFNOT
+  }>
+  $ClaimMaster$_internal_binary_ChangeMinter PROCINLINE:<{
+    s5 POP
+    __tact_context_get_sender INLINECALLDICT
+    s4 s(-1) PUXC
     __tact_slice_eq_bits INLINECALLDICT
     101 THROWIFNOT
   }>
   $ClaimMaster$_internal_binary_CustomMessage PROCINLINE:<{
     __tact_context_get_sender INLINECALLDICT
-    s7 s(-1) PUXC
+    s6 s(-1) PUXC
     __tact_slice_eq_bits INLINECALLDICT
     101 THROWIFNOT
     0 PUSHINT
@@ -878,220 +909,45 @@ PROGRAM{
     $SendParameters$_constructor_to_value_mode_body INLINECALLDICT
     $global_send INLINECALLDICT
   }>
-  $ClaimMaster$_internal_binary_SetCode PROCINLINE:<{
-    __tact_context_get_sender INLINECALLDICT
-    s6 s(-1) PUXC
-    __tact_slice_eq_bits INLINECALLDICT
-    101 THROWIFNOT
-    SETCODE
-  }>
   $ClaimMaster$_internal_binary_TokenNotification PROCINLINE:<{
     DROP
     s2 POP
     __tact_context_get_sender INLINECALLDICT
-    s10 s(-1) PUXC
+    s9 s(-1) PUXC
     __tact_slice_eq_bits_nullable_one INLINECALLDICT
     101 THROWIFNOT
-    10 -ROLL
+    8 -ROLL
     $ClaimMaster$_fun_get_user_address INLINECALLDICT
     0 PUSHINT
     64 PUSHINT
-    s0 s12 XCHG
+    s0 s10 XCHG
     1000000000 PUSHINT
     DIV
     $Boost$_constructor_amount INLINECALLDICT
     $Boost$_store_cell INLINECALLDICT
     s1 s3 s0 XCHG3
-    s1 s12 XCHG
+    s1 s10 XCHG
     $SendParameters$_constructor_to_value_mode_body INLINECALLDICT
     $global_send INLINECALLDICT
-    8 ROLL
-  }>
-  $ClaimMaster$_internal_binary_MintChildWithClaim PROCINLINE:<{
-    __tact_context_get_sender INLINECALLDICT
-    s8 s(-1) PUXC
-    __tact_slice_eq_bits INLINECALLDICT
-    101 THROWIFNOT
-    __tact_context_sys GETGLOB
-    MYADDR
-    s3 s9 s10 PUSH3
-    $ClaimChild$_init_child INLINECALLDICT
-    2DUP
-    $global_contractAddress INLINECALLDICT
-    0 PUSHINT
-    s0 s5 XCHG
-    64 PUSHINT
-    s0 s5 XCHG
-    $MintChildWithClaim$_store_cell INLINECALLDICT
-    s1 s5 XCHG
-    s1 s4 XCHG
-    s3 s3 s0 XCHG3
-    $SendParameters$_constructor_to_value_mode_code_data_body INLINECALLDICT
-    $global_send INLINECALLDICT
-  }>
-  $ClaimMaster$_internal_binary_MintChildNoClaim PROCINLINE:<{
-    __tact_context_get_sender INLINECALLDICT
-    s8 s(-1) PUXC
-    __tact_slice_eq_bits INLINECALLDICT
-    101 THROWIFNOT
-    __tact_context_sys GETGLOB
-    MYADDR
-    s3 s9 s10 PUSH3
-    $ClaimChild$_init_child INLINECALLDICT
-    2DUP
-    $global_contractAddress INLINECALLDICT
-    0 PUSHINT
-    s0 s5 XCHG
-    64 PUSHINT
-    s0 s5 XCHG
-    $MintChildNoClaim$_store_cell INLINECALLDICT
-    s1 s5 XCHG
-    s1 s4 XCHG
-    s3 s3 s0 XCHG3
-    $SendParameters$_constructor_to_value_mode_code_data_body INLINECALLDICT
-    $global_send INLINECALLDICT
-  }>
-  $ClaimMaster$_internal_binary_Claim PROCINLINE:<{
-    s8 s12 XCHG
-    s7 s11 XCHG
-    s6 s10 XCHG
-    s5 s9 XCHG
-    s4 s12 XCHG
-    s3 s11 XCHG
-    s10 s9 s12 XCHG3
-    s9 PUSH
-    $ClaimMaster$_fun_get_user_address INLINECALLDICT
-    __tact_context_get_sender INLINECALLDICT
-    __tact_slice_eq_bits INLINECALLDICT
-    101 THROWIFNOT
-    50000000 PUSHINT
-    s8 PUSH
-    __tact_not_null INLINECALLDICT
-    0 PUSHINT
-    s0 s14 s5 PUXCPU
-    MUL
-    s7 s(-1) PUXC
-    ADD
-    s14 s5 XCPU
-    MUL
-    s1 s14 XCHG
-    ADD
-    MYADDR
-    s2 s15 XCHG
-    s13 s(-1) PUXC
-    PUSHNULL
-    1 PUSHINT
-    PUSHNULL
-    $TokenTransfer$_constructor_queryId_amount_destination_responseDestination_customPayload_forwardTonAmount_forwardPayload INLINECALLDICT
-    $TokenTransfer$_store_cell INLINECALLDICT
-    s13 s3 s0 XCHG3
-    s1 s12 XCHG
-    $SendParameters$_constructor_value_to_mode_body INLINECALLDICT
-    $global_send INLINECALLDICT
-    s10 PUSH
-    ISNULL
-    NOT
-    IF:<{
-      s10 PUSH
-      __tact_not_null INLINECALLDICT
-      s7 s9 XCHG
-      s6 s8 XCHG
-      s5 s7 XCHG
-      s4 s6 XCHG
-      s3 s5 XCHG
-      s4 s3 s0 XCHG3
-      s1 s10 s0 XCHG3
-      $ClaimMaster$_fun_get_user_address INLINECALLDICT
-      0 PUSHINT
-      64 PUSHINT
-      s0 s13 XCHG
-      __tact_not_null INLINECALLDICT
-      s1 s12 XCHG
-      $AddReferral$_constructor_from_to INLINECALLDICT
-      $AddReferral$_store_cell INLINECALLDICT
-      s3 s11 XCHG
-      s1 s12 s0 XCHG3
-      $SendParameters$_constructor_value_to_mode_body INLINECALLDICT
-      $global_send INLINECALLDICT
-      s0 s5 XCHG
-      s8 s3 XCHG2
-      s0 s7 XCHG2
-      s0 s6 XCHG
-      s4 s1 s4 XCHG3
-    }>ELSE<{
-      s7 POP
-      s9 POP
-    }>
-    s4 s8 XCHG
-    s3 s7 XCHG
-    s6 s1 s4 XCHG3
-    s5 s5 s3 XCHG3
-  }>
-  $ClaimMaster$_internal_binary_AddReferral PROCINLINE:<{
-    s8 s10 XCHG
-    5 6 REVERSE
-    s5 s9 XCHG
-    s4 s10 XCHG
-    s3 s9 XCHG
-    s10 s9 s10 XCHG3
-    s9 PUSH
-    $ClaimMaster$_fun_get_user_address INLINECALLDICT
-    __tact_context_get_sender INLINECALLDICT
-    __tact_slice_eq_bits INLINECALLDICT
-    101 THROWIFNOT
-    s10 PUSH
-    $ClaimMaster$_fun_get_user_address INLINECALLDICT
-    0 PUSHINT
-    s0 s11 XCHG
-    64 PUSHINT
-    s0 s13 XCHG
-    $AddReferral$_store_cell INLINECALLDICT
-    s3 s11 XCHG
-    s1 s12 s0 XCHG3
-    $SendParameters$_constructor_value_to_mode_body INLINECALLDICT
-    $global_send INLINECALLDICT
-    s6 s8 XCHG
-    2 6 BLKSWAP
-  }>
-  $ClaimMaster$_internal_binary_TokenConfig PROCINLINE:<{
-    s5 POP
-    s5 POP
-    s5 POP
-    s8 POP
-    __tact_context_get INLINECALLDICT
-    s2 s3 XCHG
-    3 BLKDROP
-    s6 s0 PUSH2
-    __tact_slice_eq_bits INLINECALLDICT
-    IF:<{
-      DROP
-      TRUE
-    }>ELSE<{
-      s5 s(-1) PUXC
-      __tact_slice_eq_bits INLINECALLDICT
-    }>
-    101 THROWIFNOT
+    6 ROLL
   }>
   %$ClaimMaster$_internal_empty PROCINLINE:<{
-  }>
-  $ClaimMaster$_internal_binary_TokenExcesses PROCINLINE:<{
-    DROP
   }>
   $ClaimMaster$_internal_binary_OwnerWithdrawalTonRequest PROCINLINE:<{
     DROP
     __tact_context_get_sender INLINECALLDICT
-    s5 s(-1) PUXC
+    s4 s(-1) PUXC
     __tact_slice_eq_bits INLINECALLDICT
     1001 THROWIFNOT
-    s4 PUSH
+    s3 PUSH
     0 PUSHINT
-    7 PUSHPOW2
+    130 PUSHINT
     $SendParameters$_constructor_to_value_mode INLINECALLDICT
     $global_send INLINECALLDICT
   }>
   $ClaimMaster$_internal_binary_OwnerWithdrawalRequest PROCINLINE:<{
     __tact_context_get_sender INLINECALLDICT
-    s7 s(-1) PUXC
+    s6 s(-1) PUXC
     __tact_slice_eq_bits INLINECALLDICT
     1001 THROWIFNOT
     DUP
@@ -1100,28 +956,23 @@ PROGRAM{
     IF:<{
       65000000 PUSHINT
       0 PUSHINT
+      s0 s3 PUXC
       PUSHNULL
       1 PUSHINT
+      s10 PUSH
+      s11 s2 s(-1) PUXC2
       PUSHNULL
-      s15 PUSH
-      s4 s12 XCPU
-      s4 s8 XCHG
-      s3 s13 XCPU
-      s9 s1 s3 XCHG3
       $TokenTransfer$_constructor_queryId_amount_destination_responseDestination_customPayload_forwardTonAmount_forwardPayload INLINECALLDICT
       $TokenTransfer$_store_cell INLINECALLDICT
       s1 s3 XCHG
       $SendParameters$_constructor_value_to_mode_body INLINECALLDICT
       $global_send INLINECALLDICT
-      s0 s8 XCHG
-      INC
-      s0 s8 XCHG
     }>ELSE<{
       2DROP
     }>
-    s4 PUSH
+    s3 PUSH
     0 PUSHINT
-    7 PUSHPOW2
+    130 PUSHINT
     $SendParameters$_constructor_to_value_mode INLINECALLDICT
     $global_send INLINECALLDICT
   }>
@@ -1130,62 +981,27 @@ PROGRAM{
     $DeployOk$_store_cell INLINECALLDICT
     $ClaimMaster$_fun_notify INLINECALLDICT
   }>
-  %interval PROC:<{
-    $ClaimMaster$_contract_load INLINECALLDICT
-    $ClaimMaster$_fun_interval INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %tokenAddress PROC:<{
-    $ClaimMaster$_contract_load INLINECALLDICT
-    $ClaimMaster$_fun_tokenAddress INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %queryId PROC:<{
-    $ClaimMaster$_contract_load INLINECALLDICT
-    $ClaimMaster$_fun_queryId INLINECALLDICT
-    9 1 BLKDROP2
-  }>
   %get_user_address PROC:<{
     __tact_verify_address INLINECALLDICT
     $ClaimMaster$_contract_load INLINECALLDICT
-    9 ROLL
+    7 ROLL
     $ClaimMaster$_fun_get_user_address INLINECALLDICT
-    9 1 BLKDROP2
+    7 1 BLKDROP2
   }>
-  %claimAmount PROC:<{
+  %get_master_data PROC:<{
     $ClaimMaster$_contract_load INLINECALLDICT
-    $ClaimMaster$_fun_claimAmount INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %referralReward PROC:<{
-    $ClaimMaster$_contract_load INLINECALLDICT
-    $ClaimMaster$_fun_referralReward INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %boostReward PROC:<{
-    $ClaimMaster$_contract_load INLINECALLDICT
-    $ClaimMaster$_fun_boostReward INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %test PROC:<{
-    $ClaimMaster$_contract_load INLINECALLDICT
-    $ClaimMaster$_fun_test INLINECALLDICT
-    9 1 BLKDROP2
-  }>
-  %owner PROC:<{
-    $ClaimMaster$_contract_load INLINECALLDICT
-    $ClaimMaster$_fun_owner INLINECALLDICT
-    9 1 BLKDROP2
+    $ClaimMaster$_fun_get_master_data INLINECALLDICT
+    7 7 BLKDROP2
+    $MasterData$_to_external INLINECALLDICT
   }>
   supported_interfaces PROC:<{
     123515602279859691144772641439386770278 PUSHINT
     209801025412363888721030803524359905849 PUSHINT
     42980537499636128163026532310500881091 PUSHINT
     209474421377847335869795010607481022628 PUSHINT
-    86142586315491086060343270784266291122 PUSHINT
   }>
   get_abi_ipfs PROC:<{
-    x{697066733a2f2f516d6347756a7677444678354d416f5375724871656346347566786d367733566354595165704e6b456e71774d57} PUSHSLICE
+    x{697066733a2f2f516d6252314156673842674c37713357767745555441716a4a3664314c725273434737733846566d6f714a4c4359} PUSHSLICE
   }>
   lazy_deployment_completed PROC:<{
     c4 PUSH
@@ -1209,59 +1025,12 @@ PROGRAM{
       32 PLDU
     }>
     DUP
-    2174598809 PUSHINT
-    EQUAL
-    IFJMP:<{
-      DROP
-      $ChangeOwner$_load INLINECALLDICT
-      1 2 BLKDROP2
-      $ClaimMaster$_internal_binary_ChangeOwner INLINECALLDICT
-      TRUE
-    }>
-    DUP
-    9 EQINT
-    IFJMP:<{
-      DROP
-      $CustomMessage$_load INLINECALLDICT
-      1 2 BLKDROP2
-      $ClaimMaster$_internal_binary_CustomMessage INLINECALLDICT
-      TRUE
-    }>
-    DUP
-    19 EQINT
-    IFJMP:<{
-      DROP
-      $SetCode$_load INLINECALLDICT
-      NIP
-      $ClaimMaster$_internal_binary_SetCode INLINECALLDICT
-      TRUE
-    }>
-    DUP
-    1935855772 PUSHINT
-    EQUAL
-    IFJMP:<{
-      DROP
-      $TokenNotification$_load INLINECALLDICT
-      1 4 BLKDROP2
-      $ClaimMaster$_internal_binary_TokenNotification INLINECALLDICT
-      TRUE
-    }>
-    DUP
     1 EQINT
     IFJMP:<{
       DROP
-      $MintChildWithClaim$_load INLINECALLDICT
-      1 2 BLKDROP2
-      $ClaimMaster$_internal_binary_MintChildWithClaim INLINECALLDICT
-      TRUE
-    }>
-    DUP
-    17 EQINT
-    IFJMP:<{
-      DROP
-      $MintChildNoClaim$_load INLINECALLDICT
-      1 2 BLKDROP2
-      $ClaimMaster$_internal_binary_MintChildNoClaim INLINECALLDICT
+      $Mint$_load INLINECALLDICT
+      1 4 BLKDROP2
+      $ClaimMaster$_internal_binary_Mint INLINECALLDICT
       TRUE
     }>
     DUP
@@ -1286,9 +1055,37 @@ PROGRAM{
     8 EQINT
     IFJMP:<{
       DROP
-      $TokenConfig$_load INLINECALLDICT
+      $MasterConfig$_load INLINECALLDICT
+      1 5 BLKDROP2
+      $ClaimMaster$_internal_binary_MasterConfig INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    18 EQINT
+    IFJMP:<{
+      DROP
+      $ChangeMinter$_load INLINECALLDICT
+      NIP
+      $ClaimMaster$_internal_binary_ChangeMinter INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    9 EQINT
+    IFJMP:<{
+      DROP
+      $CustomMessage$_load INLINECALLDICT
+      1 2 BLKDROP2
+      $ClaimMaster$_internal_binary_CustomMessage INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    1935855772 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $TokenNotification$_load INLINECALLDICT
       1 4 BLKDROP2
-      $ClaimMaster$_internal_binary_TokenConfig INLINECALLDICT
+      $ClaimMaster$_internal_binary_TokenNotification INLINECALLDICT
       TRUE
     }>
     DUP
@@ -1300,16 +1097,6 @@ PROGRAM{
     IFJMP:<{
       2DROP
       %$ClaimMaster$_internal_empty INLINECALLDICT
-      TRUE
-    }>
-    DUP
-    3576854235 PUSHINT
-    EQUAL
-    IFJMP:<{
-      DROP
-      $TokenExcesses$_load INLINECALLDICT
-      NIP
-      $ClaimMaster$_internal_binary_TokenExcesses INLINECALLDICT
       TRUE
     }>
     DUP
@@ -1360,7 +1147,7 @@ PROGRAM{
     s0 s2 XCHG
     __tact_context_sender SETGLOB
     $ClaimMaster$_contract_load INLINECALLDICT
-    2 9 BLKSWAP
+    2 7 BLKSWAP
     $ClaimMaster$_contract_router_internal INLINECALLDICT
     130 THROWIFNOT
     $ClaimMaster$_contract_store INLINECALLDICT

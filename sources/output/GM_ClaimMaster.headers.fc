@@ -60,26 +60,14 @@ builder $DeployOk$_store(builder build_0, (int) v) inline;
 ;; $DeployOk$_store_cell
 cell $DeployOk$_store_cell((int) v) inline;
 
-;; $ChangeOwner$_load
-(slice, ((int, slice))) $ChangeOwner$_load(slice sc_0) inline;
+;; $Mint$_store
+builder $Mint$_store(builder build_0, (slice, slice, int, slice) v) inline;
 
-;; $MintChildWithClaim$_store
-builder $MintChildWithClaim$_store(builder build_0, (slice, slice) v) inline;
+;; $Mint$_store_cell
+cell $Mint$_store_cell((slice, slice, int, slice) v) inline;
 
-;; $MintChildWithClaim$_store_cell
-cell $MintChildWithClaim$_store_cell((slice, slice) v) inline;
-
-;; $MintChildWithClaim$_load
-(slice, ((slice, slice))) $MintChildWithClaim$_load(slice sc_0) inline;
-
-;; $MintChildNoClaim$_store
-builder $MintChildNoClaim$_store(builder build_0, (slice, slice) v) inline;
-
-;; $MintChildNoClaim$_store_cell
-cell $MintChildNoClaim$_store_cell((slice, slice) v) inline;
-
-;; $MintChildNoClaim$_load
-(slice, ((slice, slice))) $MintChildNoClaim$_load(slice sc_0) inline;
+;; $Mint$_load
+(slice, ((slice, slice, int, slice))) $Mint$_load(slice sc_0) inline;
 
 ;; $Claim$_load
 (slice, ((int, int, slice, slice))) $Claim$_load(slice sc_0) inline;
@@ -105,20 +93,17 @@ cell $Boost$_store_cell((int) v) inline;
 ;; $OwnerWithdrawalTonRequest$_load
 (slice, (tuple)) $OwnerWithdrawalTonRequest$_load(slice sc_0) inline;
 
-;; $TokenConfig$_load
-(slice, ((slice, int, int, int))) $TokenConfig$_load(slice sc_0) inline;
+;; $MasterConfig$_load
+(slice, ((slice, int, int, int, int))) $MasterConfig$_load(slice sc_0) inline;
 
 ;; $CustomMessage$_load
 (slice, ((slice, cell))) $CustomMessage$_load(slice sc_0) inline;
 
-;; $SetCode$_load
-(slice, ((cell))) $SetCode$_load(slice sc_0) inline;
+;; $ChangeMinter$_load
+(slice, ((slice))) $ChangeMinter$_load(slice sc_0) inline;
 
 ;; $TokenNotification$_load
 (slice, ((int, int, slice, slice))) $TokenNotification$_load(slice sc_0) inline;
-
-;; $TokenExcesses$_load
-(slice, ((int))) $TokenExcesses$_load(slice sc_0) inline;
 
 ;; $TokenTransfer$_store
 builder $TokenTransfer$_store(builder build_0, (int, int, slice, slice, cell, int, slice) v) inline_ref;
@@ -127,28 +112,31 @@ builder $TokenTransfer$_store(builder build_0, (int, int, slice, slice, cell, in
 cell $TokenTransfer$_store_cell((int, int, slice, slice, cell, int, slice) v) inline;
 
 ;; $ClaimMaster$_store
-builder $ClaimMaster$_store(builder build_0, (int, slice, int, slice, slice, int, int, int, int) v) inline;
+builder $ClaimMaster$_store(builder build_0, (slice, int, slice, slice, int, int, int) v) inline;
 
 ;; $ClaimMaster$_load
-(slice, ((int, slice, int, slice, slice, int, int, int, int))) $ClaimMaster$_load(slice sc_0) inline;
+(slice, ((slice, int, slice, slice, int, int, int))) $ClaimMaster$_load(slice sc_0) inline;
 
 ;; $StateInit$_not_null
 ((cell, cell)) $StateInit$_not_null(tuple v) inline;
 
+;; $MasterData$_to_external
+(slice, int, slice, slice, int, int, int) $MasterData$_to_external(((slice, int, slice, slice, int, int, int)) v) inline;
+
 ;; $ClaimChild$init$_store
-builder $ClaimChild$init$_store(builder build_0, (slice, slice, slice, int) v) inline;
+builder $ClaimChild$init$_store(builder build_0, (slice, slice) v) inline;
 
 ;; $ClaimMaster$init$_load
-(slice, ((slice, slice, int))) $ClaimMaster$init$_load(slice sc_0) inline;
+(slice, ((slice, slice))) $ClaimMaster$init$_load(slice sc_0) inline;
 
 ;; $ClaimMaster$_contract_init
-(int, slice, int, slice, slice, int, int, int, int) $ClaimMaster$_contract_init(slice $owner, slice $master, int $interval) impure inline_ref;
+(slice, int, slice, slice, int, int, int) $ClaimMaster$_contract_init(slice $minter, slice $admin) impure inline_ref;
 
 ;; $ClaimMaster$_contract_load
-(int, slice, int, slice, slice, int, int, int, int) $ClaimMaster$_contract_load() impure inline_ref;
+(slice, int, slice, slice, int, int, int) $ClaimMaster$_contract_load() impure inline_ref;
 
 ;; $ClaimMaster$_contract_store
-() $ClaimMaster$_contract_store((int, slice, int, slice, slice, int, int, int, int) v) impure inline;
+() $ClaimMaster$_contract_store((slice, int, slice, slice, int, int, int) v) impure inline;
 
 ;; $global_contractAddress
 slice $global_contractAddress((cell, cell) $s) impure inline;
@@ -157,49 +145,25 @@ slice $global_contractAddress((cell, cell) $s) impure inline;
 () $global_send((int, slice, int, int, cell, cell, cell) $params) impure inline;
 
 ;; $ClaimChild$_init_child
-(cell, cell) $ClaimChild$_init_child(cell sys', slice $parent, slice $user, slice $master, int $interval) inline;
+(cell, cell) $ClaimChild$_init_child(cell sys', slice $master, slice $owner) inline;
 
 ;; $SendParameters$_constructor_bounce_to_value_mode_body_code_data
 ((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body_code_data(int bounce, slice to, int value, int mode, cell body, cell code, cell data) inline;
 
-;; $ClaimMaster$_fun_interval
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_fun_interval((int, slice, int, slice, slice, int, int, int, int) $self) impure inline;
-
-;; $ClaimMaster$_fun_tokenAddress
-((int, slice, int, slice, slice, int, int, int, int), slice) $ClaimMaster$_fun_tokenAddress((int, slice, int, slice, slice, int, int, int, int) $self) impure inline;
-
-;; $ClaimMaster$_fun_queryId
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_fun_queryId((int, slice, int, slice, slice, int, int, int, int) $self) impure inline;
-
 ;; $ClaimMaster$_fun_get_user_address
-((int, slice, int, slice, slice, int, int, int, int), slice) $ClaimMaster$_fun_get_user_address((int, slice, int, slice, slice, int, int, int, int) $self, slice $user) impure inline;
+((slice, int, slice, slice, int, int, int), slice) $ClaimMaster$_fun_get_user_address((slice, int, slice, slice, int, int, int) $self, slice $user) impure inline;
 
-;; $ClaimMaster$_fun_claimAmount
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_fun_claimAmount((int, slice, int, slice, slice, int, int, int, int) $self) impure inline;
+;; $MasterData$_constructor_jettonWallet_interval_minter_admin_claimAmount_referralReward_boostReward
+((slice, int, slice, slice, int, int, int)) $MasterData$_constructor_jettonWallet_interval_minter_admin_claimAmount_referralReward_boostReward(slice jettonWallet, int interval, slice minter, slice admin, int claimAmount, int referralReward, int boostReward) inline;
 
-;; $ClaimMaster$_fun_referralReward
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_fun_referralReward((int, slice, int, slice, slice, int, int, int, int) $self) impure inline;
-
-;; $ClaimMaster$_fun_boostReward
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_fun_boostReward((int, slice, int, slice, slice, int, int, int, int) $self) impure inline;
-
-;; $ClaimMaster$_fun_test
-((int, slice, int, slice, slice, int, int, int, int), int) $ClaimMaster$_fun_test((int, slice, int, slice, slice, int, int, int, int) $self) impure inline;
+;; $ClaimMaster$_fun_get_master_data
+((slice, int, slice, slice, int, int, int), (slice, int, slice, slice, int, int, int)) $ClaimMaster$_fun_get_master_data((slice, int, slice, slice, int, int, int) $self) impure inline;
 
 ;; $ClaimMaster$_fun_forward
-((int, slice, int, slice, slice, int, int, int, int), ()) $ClaimMaster$_fun_forward((int, slice, int, slice, slice, int, int, int, int) $self, slice $to, cell $body, int $bounce, tuple $init) impure inline;
+((slice, int, slice, slice, int, int, int), ()) $ClaimMaster$_fun_forward((slice, int, slice, slice, int, int, int) $self, slice $to, cell $body, int $bounce, tuple $init) impure inline;
 
 ;; $ClaimMaster$_fun_notify
-((int, slice, int, slice, slice, int, int, int, int), ()) $ClaimMaster$_fun_notify((int, slice, int, slice, slice, int, int, int, int) $self, cell $body) impure inline;
-
-;; $ClaimMaster$_fun_owner
-((int, slice, int, slice, slice, int, int, int, int), slice) $ClaimMaster$_fun_owner((int, slice, int, slice, slice, int, int, int, int) $self) impure inline;
-
-;; $SendParameters$_constructor_to_value_mode_body
-((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_body(slice to, int value, int mode, cell body) inline;
-
-;; $Boost$_constructor_amount
-((int)) $Boost$_constructor_amount(int amount) inline;
+((slice, int, slice, slice, int, int, int), ()) $ClaimMaster$_fun_notify((slice, int, slice, slice, int, int, int) $self, cell $body) impure inline;
 
 ;; $SendParameters$_constructor_to_value_mode_code_data_body
 ((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_code_data_body(slice to, int value, int mode, cell code, cell data, cell body) inline;
@@ -212,6 +176,12 @@ slice $global_contractAddress((cell, cell) $s) impure inline;
 
 ;; $AddReferral$_constructor_from_to
 ((slice, slice)) $AddReferral$_constructor_from_to(slice from, slice to) inline;
+
+;; $SendParameters$_constructor_to_value_mode_body
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_body(slice to, int value, int mode, cell body) inline;
+
+;; $Boost$_constructor_amount
+((int)) $Boost$_constructor_amount(int amount) inline;
 
 ;; $SendParameters$_constructor_to_value_mode
 ((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode(slice to, int value, int mode) inline;

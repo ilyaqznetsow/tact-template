@@ -415,96 +415,142 @@ function dictValueParserChangeOwnerOk(): DictionaryValue<ChangeOwnerOk> {
     }
 }
 
-export type MintChildWithClaim = {
-    $$type: 'MintChildWithClaim';
-    user: Address;
+export type ChildData = {
+    $$type: 'ChildData';
+    interval: bigint;
+    lastClaimTime: bigint;
+    referralsCount: bigint;
+    boost: bigint;
+    owner: Address;
+    master: Address;
+    admin: Address | null;
     referrer: Address | null;
+    ban: boolean;
 }
 
-export function storeMintChildWithClaim(src: MintChildWithClaim) {
+export function storeChildData(src: ChildData) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(src.interval, 32);
+        b_0.storeUint(src.lastClaimTime, 64);
+        b_0.storeUint(src.referralsCount, 32);
+        b_0.storeUint(src.boost, 32);
+        b_0.storeAddress(src.owner);
+        b_0.storeAddress(src.master);
+        b_0.storeAddress(src.admin);
+        let b_1 = new Builder();
+        b_1.storeAddress(src.referrer);
+        b_1.storeBit(src.ban);
+        b_0.storeRef(b_1.endCell());
+    };
+}
+
+export function loadChildData(slice: Slice) {
+    let sc_0 = slice;
+    let _interval = sc_0.loadUintBig(32);
+    let _lastClaimTime = sc_0.loadUintBig(64);
+    let _referralsCount = sc_0.loadUintBig(32);
+    let _boost = sc_0.loadUintBig(32);
+    let _owner = sc_0.loadAddress();
+    let _master = sc_0.loadAddress();
+    let _admin = sc_0.loadMaybeAddress();
+    let sc_1 = sc_0.loadRef().beginParse();
+    let _referrer = sc_1.loadMaybeAddress();
+    let _ban = sc_1.loadBit();
+    return { $$type: 'ChildData' as const, interval: _interval, lastClaimTime: _lastClaimTime, referralsCount: _referralsCount, boost: _boost, owner: _owner, master: _master, admin: _admin, referrer: _referrer, ban: _ban };
+}
+
+function loadTupleChildData(source: TupleReader) {
+    let _interval = source.readBigNumber();
+    let _lastClaimTime = source.readBigNumber();
+    let _referralsCount = source.readBigNumber();
+    let _boost = source.readBigNumber();
+    let _owner = source.readAddress();
+    let _master = source.readAddress();
+    let _admin = source.readAddressOpt();
+    let _referrer = source.readAddressOpt();
+    let _ban = source.readBoolean();
+    return { $$type: 'ChildData' as const, interval: _interval, lastClaimTime: _lastClaimTime, referralsCount: _referralsCount, boost: _boost, owner: _owner, master: _master, admin: _admin, referrer: _referrer, ban: _ban };
+}
+
+function storeTupleChildData(source: ChildData) {
+    let builder = new TupleBuilder();
+    builder.writeNumber(source.interval);
+    builder.writeNumber(source.lastClaimTime);
+    builder.writeNumber(source.referralsCount);
+    builder.writeNumber(source.boost);
+    builder.writeAddress(source.owner);
+    builder.writeAddress(source.master);
+    builder.writeAddress(source.admin);
+    builder.writeAddress(source.referrer);
+    builder.writeBoolean(source.ban);
+    return builder.build();
+}
+
+function dictValueParserChildData(): DictionaryValue<ChildData> {
+    return {
+        serialize: (src, buidler) => {
+            buidler.storeRef(beginCell().store(storeChildData(src)).endCell());
+        },
+        parse: (src) => {
+            return loadChildData(src.loadRef().beginParse());
+        }
+    }
+}
+
+export type Mint = {
+    $$type: 'Mint';
+    user: Address;
+    referrer: Address | null;
+    interval: bigint;
+    admin: Address;
+}
+
+export function storeMint(src: Mint) {
     return (builder: Builder) => {
         let b_0 = builder;
         b_0.storeUint(1, 32);
         b_0.storeAddress(src.user);
         b_0.storeAddress(src.referrer);
+        b_0.storeUint(src.interval, 32);
+        b_0.storeAddress(src.admin);
     };
 }
 
-export function loadMintChildWithClaim(slice: Slice) {
+export function loadMint(slice: Slice) {
     let sc_0 = slice;
     if (sc_0.loadUint(32) !== 1) { throw Error('Invalid prefix'); }
     let _user = sc_0.loadAddress();
     let _referrer = sc_0.loadMaybeAddress();
-    return { $$type: 'MintChildWithClaim' as const, user: _user, referrer: _referrer };
+    let _interval = sc_0.loadUintBig(32);
+    let _admin = sc_0.loadAddress();
+    return { $$type: 'Mint' as const, user: _user, referrer: _referrer, interval: _interval, admin: _admin };
 }
 
-function loadTupleMintChildWithClaim(source: TupleReader) {
+function loadTupleMint(source: TupleReader) {
     let _user = source.readAddress();
     let _referrer = source.readAddressOpt();
-    return { $$type: 'MintChildWithClaim' as const, user: _user, referrer: _referrer };
+    let _interval = source.readBigNumber();
+    let _admin = source.readAddress();
+    return { $$type: 'Mint' as const, user: _user, referrer: _referrer, interval: _interval, admin: _admin };
 }
 
-function storeTupleMintChildWithClaim(source: MintChildWithClaim) {
+function storeTupleMint(source: Mint) {
     let builder = new TupleBuilder();
     builder.writeAddress(source.user);
     builder.writeAddress(source.referrer);
+    builder.writeNumber(source.interval);
+    builder.writeAddress(source.admin);
     return builder.build();
 }
 
-function dictValueParserMintChildWithClaim(): DictionaryValue<MintChildWithClaim> {
+function dictValueParserMint(): DictionaryValue<Mint> {
     return {
         serialize: (src, buidler) => {
-            buidler.storeRef(beginCell().store(storeMintChildWithClaim(src)).endCell());
+            buidler.storeRef(beginCell().store(storeMint(src)).endCell());
         },
         parse: (src) => {
-            return loadMintChildWithClaim(src.loadRef().beginParse());
-        }
-    }
-}
-
-export type MintChildNoClaim = {
-    $$type: 'MintChildNoClaim';
-    user: Address;
-    referrer: Address | null;
-}
-
-export function storeMintChildNoClaim(src: MintChildNoClaim) {
-    return (builder: Builder) => {
-        let b_0 = builder;
-        b_0.storeUint(17, 32);
-        b_0.storeAddress(src.user);
-        b_0.storeAddress(src.referrer);
-    };
-}
-
-export function loadMintChildNoClaim(slice: Slice) {
-    let sc_0 = slice;
-    if (sc_0.loadUint(32) !== 17) { throw Error('Invalid prefix'); }
-    let _user = sc_0.loadAddress();
-    let _referrer = sc_0.loadMaybeAddress();
-    return { $$type: 'MintChildNoClaim' as const, user: _user, referrer: _referrer };
-}
-
-function loadTupleMintChildNoClaim(source: TupleReader) {
-    let _user = source.readAddress();
-    let _referrer = source.readAddressOpt();
-    return { $$type: 'MintChildNoClaim' as const, user: _user, referrer: _referrer };
-}
-
-function storeTupleMintChildNoClaim(source: MintChildNoClaim) {
-    let builder = new TupleBuilder();
-    builder.writeAddress(source.user);
-    builder.writeAddress(source.referrer);
-    return builder.build();
-}
-
-function dictValueParserMintChildNoClaim(): DictionaryValue<MintChildNoClaim> {
-    return {
-        serialize: (src, buidler) => {
-            buidler.storeRef(beginCell().store(storeMintChildNoClaim(src)).endCell());
-        },
-        parse: (src) => {
-            return loadMintChildNoClaim(src.loadRef().beginParse());
+            return loadMint(src.loadRef().beginParse());
         }
     }
 }
@@ -705,7 +751,7 @@ function dictValueParserBoost(): DictionaryValue<Boost> {
 export type OwnerWithdrawalRequest = {
     $$type: 'OwnerWithdrawalRequest';
     amount: bigint;
-    tokenAddress: Address;
+    jettonWallet: Address;
 }
 
 export function storeOwnerWithdrawalRequest(src: OwnerWithdrawalRequest) {
@@ -713,7 +759,7 @@ export function storeOwnerWithdrawalRequest(src: OwnerWithdrawalRequest) {
         let b_0 = builder;
         b_0.storeUint(6, 32);
         b_0.storeCoins(src.amount);
-        b_0.storeAddress(src.tokenAddress);
+        b_0.storeAddress(src.jettonWallet);
     };
 }
 
@@ -721,20 +767,20 @@ export function loadOwnerWithdrawalRequest(slice: Slice) {
     let sc_0 = slice;
     if (sc_0.loadUint(32) !== 6) { throw Error('Invalid prefix'); }
     let _amount = sc_0.loadCoins();
-    let _tokenAddress = sc_0.loadAddress();
-    return { $$type: 'OwnerWithdrawalRequest' as const, amount: _amount, tokenAddress: _tokenAddress };
+    let _jettonWallet = sc_0.loadAddress();
+    return { $$type: 'OwnerWithdrawalRequest' as const, amount: _amount, jettonWallet: _jettonWallet };
 }
 
 function loadTupleOwnerWithdrawalRequest(source: TupleReader) {
     let _amount = source.readBigNumber();
-    let _tokenAddress = source.readAddress();
-    return { $$type: 'OwnerWithdrawalRequest' as const, amount: _amount, tokenAddress: _tokenAddress };
+    let _jettonWallet = source.readAddress();
+    return { $$type: 'OwnerWithdrawalRequest' as const, amount: _amount, jettonWallet: _jettonWallet };
 }
 
 function storeTupleOwnerWithdrawalRequest(source: OwnerWithdrawalRequest) {
     let builder = new TupleBuilder();
     builder.writeNumber(source.amount);
-    builder.writeAddress(source.tokenAddress);
+    builder.writeAddress(source.jettonWallet);
     return builder.build();
 }
 
@@ -786,59 +832,64 @@ function dictValueParserOwnerWithdrawalTonRequest(): DictionaryValue<OwnerWithdr
     }
 }
 
-export type TokenConfig = {
-    $$type: 'TokenConfig';
-    tokenAddress: Address;
+export type MasterConfig = {
+    $$type: 'MasterConfig';
+    jettonWallet: Address;
+    interval: bigint;
     claimAmount: bigint;
     referralReward: bigint;
     boostReward: bigint;
 }
 
-export function storeTokenConfig(src: TokenConfig) {
+export function storeMasterConfig(src: MasterConfig) {
     return (builder: Builder) => {
         let b_0 = builder;
         b_0.storeUint(8, 32);
-        b_0.storeAddress(src.tokenAddress);
+        b_0.storeAddress(src.jettonWallet);
+        b_0.storeUint(src.interval, 32);
         b_0.storeCoins(src.claimAmount);
         b_0.storeCoins(src.referralReward);
         b_0.storeCoins(src.boostReward);
     };
 }
 
-export function loadTokenConfig(slice: Slice) {
+export function loadMasterConfig(slice: Slice) {
     let sc_0 = slice;
     if (sc_0.loadUint(32) !== 8) { throw Error('Invalid prefix'); }
-    let _tokenAddress = sc_0.loadAddress();
+    let _jettonWallet = sc_0.loadAddress();
+    let _interval = sc_0.loadUintBig(32);
     let _claimAmount = sc_0.loadCoins();
     let _referralReward = sc_0.loadCoins();
     let _boostReward = sc_0.loadCoins();
-    return { $$type: 'TokenConfig' as const, tokenAddress: _tokenAddress, claimAmount: _claimAmount, referralReward: _referralReward, boostReward: _boostReward };
+    return { $$type: 'MasterConfig' as const, jettonWallet: _jettonWallet, interval: _interval, claimAmount: _claimAmount, referralReward: _referralReward, boostReward: _boostReward };
 }
 
-function loadTupleTokenConfig(source: TupleReader) {
-    let _tokenAddress = source.readAddress();
+function loadTupleMasterConfig(source: TupleReader) {
+    let _jettonWallet = source.readAddress();
+    let _interval = source.readBigNumber();
     let _claimAmount = source.readBigNumber();
     let _referralReward = source.readBigNumber();
     let _boostReward = source.readBigNumber();
-    return { $$type: 'TokenConfig' as const, tokenAddress: _tokenAddress, claimAmount: _claimAmount, referralReward: _referralReward, boostReward: _boostReward };
+    return { $$type: 'MasterConfig' as const, jettonWallet: _jettonWallet, interval: _interval, claimAmount: _claimAmount, referralReward: _referralReward, boostReward: _boostReward };
 }
 
-function storeTupleTokenConfig(source: TokenConfig) {
+function storeTupleMasterConfig(source: MasterConfig) {
     let builder = new TupleBuilder();
-    builder.writeAddress(source.tokenAddress);
+    builder.writeAddress(source.jettonWallet);
+    builder.writeNumber(source.interval);
     builder.writeNumber(source.claimAmount);
     builder.writeNumber(source.referralReward);
     builder.writeNumber(source.boostReward);
     return builder.build();
 }
 
-function dictValueParserTokenConfig(): DictionaryValue<TokenConfig> {
+function dictValueParserMasterConfig(): DictionaryValue<MasterConfig> {
     return {
         serialize: (src, buidler) => {
-            buidler.storeRef(beginCell().store(storeTokenConfig(src)).endCell());
+            buidler.storeRef(beginCell().store(storeMasterConfig(src)).endCell());
         },
         parse: (src) => {
-            return loadTokenConfig(src.loadRef().beginParse());
+            return loadMasterConfig(src.loadRef().beginParse());
         }
     }
 }
@@ -947,7 +998,7 @@ export type Web3Ban = {
 export function storeWeb3Ban(src: Web3Ban) {
     return (builder: Builder) => {
         let b_0 = builder;
-        b_0.storeUint(18, 32);
+        b_0.storeUint(17, 32);
         b_0.storeBit(src.ban);
         b_0.storeUint(src.referralsCount, 32);
         b_0.storeUint(src.boost, 32);
@@ -956,7 +1007,7 @@ export function storeWeb3Ban(src: Web3Ban) {
 
 export function loadWeb3Ban(slice: Slice) {
     let sc_0 = slice;
-    if (sc_0.loadUint(32) !== 18) { throw Error('Invalid prefix'); }
+    if (sc_0.loadUint(32) !== 17) { throw Error('Invalid prefix'); }
     let _ban = sc_0.loadBit();
     let _referralsCount = sc_0.loadUintBig(32);
     let _boost = sc_0.loadUintBig(32);
@@ -989,44 +1040,44 @@ function dictValueParserWeb3Ban(): DictionaryValue<Web3Ban> {
     }
 }
 
-export type SetCode = {
-    $$type: 'SetCode';
-    newCode: Cell;
+export type ChangeMinter = {
+    $$type: 'ChangeMinter';
+    newMinter: Address;
 }
 
-export function storeSetCode(src: SetCode) {
+export function storeChangeMinter(src: ChangeMinter) {
     return (builder: Builder) => {
         let b_0 = builder;
-        b_0.storeUint(19, 32);
-        b_0.storeRef(src.newCode);
+        b_0.storeUint(18, 32);
+        b_0.storeAddress(src.newMinter);
     };
 }
 
-export function loadSetCode(slice: Slice) {
+export function loadChangeMinter(slice: Slice) {
     let sc_0 = slice;
-    if (sc_0.loadUint(32) !== 19) { throw Error('Invalid prefix'); }
-    let _newCode = sc_0.loadRef();
-    return { $$type: 'SetCode' as const, newCode: _newCode };
+    if (sc_0.loadUint(32) !== 18) { throw Error('Invalid prefix'); }
+    let _newMinter = sc_0.loadAddress();
+    return { $$type: 'ChangeMinter' as const, newMinter: _newMinter };
 }
 
-function loadTupleSetCode(source: TupleReader) {
-    let _newCode = source.readCell();
-    return { $$type: 'SetCode' as const, newCode: _newCode };
+function loadTupleChangeMinter(source: TupleReader) {
+    let _newMinter = source.readAddress();
+    return { $$type: 'ChangeMinter' as const, newMinter: _newMinter };
 }
 
-function storeTupleSetCode(source: SetCode) {
+function storeTupleChangeMinter(source: ChangeMinter) {
     let builder = new TupleBuilder();
-    builder.writeCell(source.newCode);
+    builder.writeAddress(source.newMinter);
     return builder.build();
 }
 
-function dictValueParserSetCode(): DictionaryValue<SetCode> {
+function dictValueParserChangeMinter(): DictionaryValue<ChangeMinter> {
     return {
         serialize: (src, buidler) => {
-            buidler.storeRef(beginCell().store(storeSetCode(src)).endCell());
+            buidler.storeRef(beginCell().store(storeChangeMinter(src)).endCell());
         },
         parse: (src) => {
-            return loadSetCode(src.loadRef().beginParse());
+            return loadChangeMinter(src.loadRef().beginParse());
         }
     }
 }
@@ -1084,48 +1135,6 @@ function dictValueParserTokenNotification(): DictionaryValue<TokenNotification> 
         },
         parse: (src) => {
             return loadTokenNotification(src.loadRef().beginParse());
-        }
-    }
-}
-
-export type TokenExcesses = {
-    $$type: 'TokenExcesses';
-    queryId: bigint;
-}
-
-export function storeTokenExcesses(src: TokenExcesses) {
-    return (builder: Builder) => {
-        let b_0 = builder;
-        b_0.storeUint(3576854235, 32);
-        b_0.storeUint(src.queryId, 64);
-    };
-}
-
-export function loadTokenExcesses(slice: Slice) {
-    let sc_0 = slice;
-    if (sc_0.loadUint(32) !== 3576854235) { throw Error('Invalid prefix'); }
-    let _queryId = sc_0.loadUintBig(64);
-    return { $$type: 'TokenExcesses' as const, queryId: _queryId };
-}
-
-function loadTupleTokenExcesses(source: TupleReader) {
-    let _queryId = source.readBigNumber();
-    return { $$type: 'TokenExcesses' as const, queryId: _queryId };
-}
-
-function storeTupleTokenExcesses(source: TokenExcesses) {
-    let builder = new TupleBuilder();
-    builder.writeNumber(source.queryId);
-    return builder.build();
-}
-
-function dictValueParserTokenExcesses(): DictionaryValue<TokenExcesses> {
-    return {
-        serialize: (src, buidler) => {
-            buidler.storeRef(beginCell().store(storeTokenExcesses(src)).endCell());
-        },
-        parse: (src) => {
-            return loadTokenExcesses(src.loadRef().beginParse());
         }
     }
 }
@@ -1202,88 +1211,100 @@ function dictValueParserTokenTransfer(): DictionaryValue<TokenTransfer> {
     }
 }
 
-export type ChildState = {
-    $$type: 'ChildState';
+export type MasterData = {
+    $$type: 'MasterData';
+    jettonWallet: Address | null;
     interval: bigint;
-    lastClaimTime: bigint;
-    referralsCount: bigint;
-    boost: bigint;
+    minter: Address;
+    admin: Address;
+    claimAmount: bigint;
+    referralReward: bigint;
+    boostReward: bigint;
 }
 
-export function storeChildState(src: ChildState) {
+export function storeMasterData(src: MasterData) {
     return (builder: Builder) => {
         let b_0 = builder;
+        b_0.storeAddress(src.jettonWallet);
         b_0.storeUint(src.interval, 32);
-        b_0.storeUint(src.lastClaimTime, 64);
-        b_0.storeUint(src.referralsCount, 32);
-        b_0.storeUint(src.boost, 32);
+        b_0.storeAddress(src.minter);
+        b_0.storeAddress(src.admin);
+        let b_1 = new Builder();
+        b_1.storeInt(src.claimAmount, 257);
+        b_1.storeInt(src.referralReward, 257);
+        b_1.storeInt(src.boostReward, 257);
+        b_0.storeRef(b_1.endCell());
     };
 }
 
-export function loadChildState(slice: Slice) {
+export function loadMasterData(slice: Slice) {
     let sc_0 = slice;
+    let _jettonWallet = sc_0.loadMaybeAddress();
     let _interval = sc_0.loadUintBig(32);
-    let _lastClaimTime = sc_0.loadUintBig(64);
-    let _referralsCount = sc_0.loadUintBig(32);
-    let _boost = sc_0.loadUintBig(32);
-    return { $$type: 'ChildState' as const, interval: _interval, lastClaimTime: _lastClaimTime, referralsCount: _referralsCount, boost: _boost };
+    let _minter = sc_0.loadAddress();
+    let _admin = sc_0.loadAddress();
+    let sc_1 = sc_0.loadRef().beginParse();
+    let _claimAmount = sc_1.loadIntBig(257);
+    let _referralReward = sc_1.loadIntBig(257);
+    let _boostReward = sc_1.loadIntBig(257);
+    return { $$type: 'MasterData' as const, jettonWallet: _jettonWallet, interval: _interval, minter: _minter, admin: _admin, claimAmount: _claimAmount, referralReward: _referralReward, boostReward: _boostReward };
 }
 
-function loadTupleChildState(source: TupleReader) {
+function loadTupleMasterData(source: TupleReader) {
+    let _jettonWallet = source.readAddressOpt();
     let _interval = source.readBigNumber();
-    let _lastClaimTime = source.readBigNumber();
-    let _referralsCount = source.readBigNumber();
-    let _boost = source.readBigNumber();
-    return { $$type: 'ChildState' as const, interval: _interval, lastClaimTime: _lastClaimTime, referralsCount: _referralsCount, boost: _boost };
+    let _minter = source.readAddress();
+    let _admin = source.readAddress();
+    let _claimAmount = source.readBigNumber();
+    let _referralReward = source.readBigNumber();
+    let _boostReward = source.readBigNumber();
+    return { $$type: 'MasterData' as const, jettonWallet: _jettonWallet, interval: _interval, minter: _minter, admin: _admin, claimAmount: _claimAmount, referralReward: _referralReward, boostReward: _boostReward };
 }
 
-function storeTupleChildState(source: ChildState) {
+function storeTupleMasterData(source: MasterData) {
     let builder = new TupleBuilder();
+    builder.writeAddress(source.jettonWallet);
     builder.writeNumber(source.interval);
-    builder.writeNumber(source.lastClaimTime);
-    builder.writeNumber(source.referralsCount);
-    builder.writeNumber(source.boost);
+    builder.writeAddress(source.minter);
+    builder.writeAddress(source.admin);
+    builder.writeNumber(source.claimAmount);
+    builder.writeNumber(source.referralReward);
+    builder.writeNumber(source.boostReward);
     return builder.build();
 }
 
-function dictValueParserChildState(): DictionaryValue<ChildState> {
+function dictValueParserMasterData(): DictionaryValue<MasterData> {
     return {
         serialize: (src, buidler) => {
-            buidler.storeRef(beginCell().store(storeChildState(src)).endCell());
+            buidler.storeRef(beginCell().store(storeMasterData(src)).endCell());
         },
         parse: (src) => {
-            return loadChildState(src.loadRef().beginParse());
+            return loadMasterData(src.loadRef().beginParse());
         }
     }
 }
 
  type ClaimChild_init_args = {
     $$type: 'ClaimChild_init_args';
-    parent: Address;
-    user: Address;
     master: Address;
-    interval: bigint;
+    owner: Address;
 }
 
 function initClaimChild_init_args(src: ClaimChild_init_args) {
     return (builder: Builder) => {
         let b_0 = builder;
-        b_0.storeAddress(src.parent);
-        b_0.storeAddress(src.user);
         b_0.storeAddress(src.master);
-        let b_1 = new Builder();
-        b_1.storeInt(src.interval, 257);
-        b_0.storeRef(b_1.endCell());
+        b_0.storeAddress(src.owner);
     };
 }
 
-async function ClaimChild_init(parent: Address, user: Address, master: Address, interval: bigint) {
-    const __code = Cell.fromBase64('te6ccgECNAEACo4AART/APSkE/S88sgLAQIBYgIDA5rQAdDTAwFxsKMB+kABINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiFRQUwNvBPhhAvhi2zxVGNs88uCCyPhDAcx/AcoAVYDbPMntVC8QEQIBIAQFAgEgJSYCASAGBwIBWAgJAgEgCgsBD7OGts8ImyRgLwC5svRgnBc7D1dLK57HoTsOdZKhRtmgnCd1jUtK2R8syLTry398WI5gnAgVcAbgGdjlM5YOq5HJbLDgnCdl05as07LczoOlm2UZuikgnBAznVp5xX50lCwHWFuJkeygAgEgDA0BD7a6u2eEbZIwLwARsK+7UTQ0gABgAgEgDg8BD67e7Z4TNkjALwB1rN3Ghq0uDM5nReXqLarKjeztTIrspm9Mig7qrmoJbijuhy6uD0rKjwppDCZMaastpkrrKCkIzmhN0EAE9AGSMH/gcCHXScIflTAg1wsf3iDAEY7XMNMfAcAR8uCB+kABINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiAH6QCHXCwHDAI4dASDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IiSMW3iEmwS4CDAAeMCIMAD4wIgEhMUFQHSUJgg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIzxZQBiDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IjPFlAEINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiM8WEssfyz/LH8hYJAPSMTP4QlKAxwXy4poibo9X+EMjIG7y0IBUaZEp2zxwWchwAcsBcwHLAXABywASzMzJ+QDIcgHLAXABywASygfL/8nQINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiCMgbvLQgFKg4w1/GxYXAbQw0x8BwAHy4IH6QAEg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIAfpAIdcLAcMAjh0BINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiJIxbeISbBLbPH8YAZww0x8BwAPy4IH6QAEg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIAfpAASDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IgSbBLbPH8aA/LABY6QMNMfAcAF8uCB0x8BMds8f+AgwBKOMTDTHwHAEvLggdIA0x/TH1UgbBMzMzT4QW8kECNfA1NwxwWSMH+UUoDHBeLy4ppQA3/gwAAB10nBIbCPIfhBbyQwbBKCEAcnDgC+8uPp+CNTBqEovpIis5Fw4uMPf+BwHh8gAZzIWXNQA8sfASDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IjPFgEg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIzxbJcIBAfwQDbW0hAd4ncIBAf1UgbW1tyHEBygFQBwHKAHABygJQBSDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IjPFlAD+gJwAcpoI26zkX+TJG6z4pczMwFwAcoA4w0hbrOcfwHKAAEgbvLQgAHMlTFwAcoA4skB+wAjAfIxMzT4QlJwxwXy4pr4I3BUWQAlAkEzyFUwclAFyx9QA/oCAfoCASDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IjPFgEgbpUwcAHLAY4eINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiM8W4slSgHCAQH8EA21tGQHMyHEBygFQBwHKAHABygJQBSDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IjPFlAD+gJwAcpoI26zkX+TJG6z4pczMwFwAcoA4w0hbrOcfwHKAAEgbvLQgAHMlTFwAcoA4skB+wAEIwLYMPhDUpJTmNs8cFnIcAHLAXMBywFwAcsAEszMyfkAyHIBywFwAcsAEsoHy//J0CDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4Ij4QW8kECNfA1OQxwWSW3+SxwXi8uKaA6QncIBAf1UgbW1tGxwBXgTQ9AQwbQGCAIkyAYAQ9A9vofLghwGCAIkyIgKAEPQXyAHI9ADJAcxwAcoAVTAFHQHMyHEBygFQBwHKAHABygJQBSDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IjPFlAD+gJwAcpoI26zkX+TJG6z4pczMwFwAcoA4w0hbrOcfwHKAAEgbvLQgAHMlTFwAcoA4skB+wADIwDSUEMg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIzxYBINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiM8WWCDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IjPFgHIgQEBzwDJAczJAUj4QW8kECNfA1OAxwWRf5RTkMcF4vLimlAzoAJwgEB/VSBtbW0hAdYxNVOCcFFkWshVMHJQBcsfUAP6AgH6AgEg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIzxYBIG6VMHABywGOHiDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IjPFuLJVGhRgEJ/BANtbSEC3jBwgECIf1UwbW3IcQHKAVAHAcoAcAHKAlAFINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiM8WUAP6AnABymgjbrORf5MkbrPilzMzAXABygDjDSFus5x/AcoAASBu8tCAAcyVMXABygDiyQH7ACIjAcrIcQHKAVAHAcoAcAHKAlAFINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiM8WUAP6AnABymgjbrORf5MkbrPilzMzAXABygDjDSFus5x/AcoAASBu8tCAAcyVMXABygDiyQH7ACMAEAAAAADwn6aYAJh/AcoAyHABygBwAcoAJG6znX8BygAEIG7y0IBQBMyWNANwAcoA4iRus51/AcoABCBu8tCAUATMljQDcAHKAOJwAcoAAn8BygACyVjMAGIgbpUwcAHLAY4eINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiM8W4hPLH8oAyQHMAQ+7+h2zwnbJGC8CASAnKAIBICkqAQ+3gjtnhK2SMC8CASArLAEVsOt2zxUdUMkbJSAvAgEgLS4BD6z7bZ4SNkjALwEOqHjbPCBskS8BDqkd2zwobJEvAjjtRNDUAfhj0gABjoTbPGwZ4Pgo1wsKgwm68uCJMDEB0vpAASDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IgB+kABINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiAH6QAEg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIAdMf0z/TH9QB0DIB5PpAASDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IgB+kABINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiAH6QAEg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIAdQB0IEBAdcAMBRDMATRVQLbPDMAevpAIdcLAcMAjh0BINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiJIxbeIB0x/SADAQORA4EDcQNhA1EDQADnAgbSEQZ3A=');
-    const __system = Cell.fromBase64('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');
+async function ClaimChild_init(master: Address, owner: Address) {
+    const __code = Cell.fromBase64('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');
+    const __system = Cell.fromBase64('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');
     let builder = beginCell();
     builder.storeRef(__system);
     builder.storeUint(0, 1);
-    initClaimChild_init_args({ $$type: 'ClaimChild_init_args', parent, user, master, interval })(builder);
+    initClaimChild_init_args({ $$type: 'ClaimChild_init_args', master, owner })(builder);
     const __data = builder.endCell();
     return { code: __code, data: __data };
 }
@@ -1324,40 +1345,31 @@ const ClaimChild_types: ABIType[] = [
     {"name":"FactoryDeploy","header":1829761339,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"cashback","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"ChangeOwner","header":2174598809,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"newOwner","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"ChangeOwnerOk","header":846932810,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"newOwner","type":{"kind":"simple","type":"address","optional":false}}]},
-    {"name":"MintChildWithClaim","header":1,"fields":[{"name":"user","type":{"kind":"simple","type":"address","optional":false}},{"name":"referrer","type":{"kind":"simple","type":"address","optional":true}}]},
-    {"name":"MintChildNoClaim","header":17,"fields":[{"name":"user","type":{"kind":"simple","type":"address","optional":false}},{"name":"referrer","type":{"kind":"simple","type":"address","optional":true}}]},
+    {"name":"ChildData","header":null,"fields":[{"name":"interval","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"lastClaimTime","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"referralsCount","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"boost","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"master","type":{"kind":"simple","type":"address","optional":false}},{"name":"admin","type":{"kind":"simple","type":"address","optional":true}},{"name":"referrer","type":{"kind":"simple","type":"address","optional":true}},{"name":"ban","type":{"kind":"simple","type":"bool","optional":false}}]},
+    {"name":"Mint","header":1,"fields":[{"name":"user","type":{"kind":"simple","type":"address","optional":false}},{"name":"referrer","type":{"kind":"simple","type":"address","optional":true}},{"name":"interval","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"admin","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"Claim","header":2,"fields":[{"name":"amount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"boost","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"user","type":{"kind":"simple","type":"address","optional":false}},{"name":"referrer","type":{"kind":"simple","type":"address","optional":true}}]},
     {"name":"AddReferral","header":3,"fields":[{"name":"from","type":{"kind":"simple","type":"address","optional":false}},{"name":"to","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"Referrer","header":4,"fields":[{"name":"user","type":{"kind":"simple","type":"address","optional":true}},{"name":"withClaim","type":{"kind":"simple","type":"bool","optional":false}}]},
     {"name":"Boost","header":5,"fields":[{"name":"amount","type":{"kind":"simple","type":"uint","optional":false,"format":32}}]},
-    {"name":"OwnerWithdrawalRequest","header":6,"fields":[{"name":"amount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"tokenAddress","type":{"kind":"simple","type":"address","optional":false}}]},
+    {"name":"OwnerWithdrawalRequest","header":6,"fields":[{"name":"amount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"jettonWallet","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"OwnerWithdrawalTonRequest","header":7,"fields":[]},
-    {"name":"TokenConfig","header":8,"fields":[{"name":"tokenAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"claimAmount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"referralReward","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"boostReward","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}}]},
+    {"name":"MasterConfig","header":8,"fields":[{"name":"jettonWallet","type":{"kind":"simple","type":"address","optional":false}},{"name":"interval","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"claimAmount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"referralReward","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"boostReward","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}}]},
     {"name":"CustomMessage","header":9,"fields":[{"name":"to","type":{"kind":"simple","type":"address","optional":false}},{"name":"payload","type":{"kind":"simple","type":"cell","optional":true}}]},
     {"name":"Referral","header":16,"fields":[{"name":"referral","type":{"kind":"simple","type":"address","optional":false}},{"name":"referrer","type":{"kind":"simple","type":"address","optional":false}}]},
-    {"name":"Web3Ban","header":18,"fields":[{"name":"ban","type":{"kind":"simple","type":"bool","optional":false}},{"name":"referralsCount","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"boost","type":{"kind":"simple","type":"uint","optional":false,"format":32}}]},
-    {"name":"SetCode","header":19,"fields":[{"name":"newCode","type":{"kind":"simple","type":"cell","optional":false}}]},
+    {"name":"Web3Ban","header":17,"fields":[{"name":"ban","type":{"kind":"simple","type":"bool","optional":false}},{"name":"referralsCount","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"boost","type":{"kind":"simple","type":"uint","optional":false,"format":32}}]},
+    {"name":"ChangeMinter","header":18,"fields":[{"name":"newMinter","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"TokenNotification","header":1935855772,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"amount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"from","type":{"kind":"simple","type":"address","optional":false}},{"name":"forwardPayload","type":{"kind":"simple","type":"slice","optional":false,"format":"remainder"}}]},
-    {"name":"TokenExcesses","header":3576854235,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}}]},
     {"name":"TokenTransfer","header":260734629,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"amount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"destination","type":{"kind":"simple","type":"address","optional":false}},{"name":"responseDestination","type":{"kind":"simple","type":"address","optional":true}},{"name":"customPayload","type":{"kind":"simple","type":"cell","optional":true}},{"name":"forwardTonAmount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"forwardPayload","type":{"kind":"simple","type":"slice","optional":true}}]},
-    {"name":"ChildState","header":null,"fields":[{"name":"interval","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"lastClaimTime","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"referralsCount","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"boost","type":{"kind":"simple","type":"uint","optional":false,"format":32}}]},
+    {"name":"MasterData","header":null,"fields":[{"name":"jettonWallet","type":{"kind":"simple","type":"address","optional":true}},{"name":"interval","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"minter","type":{"kind":"simple","type":"address","optional":false}},{"name":"admin","type":{"kind":"simple","type":"address","optional":false}},{"name":"claimAmount","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"referralReward","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"boostReward","type":{"kind":"simple","type":"int","optional":false,"format":257}}]},
 ]
 
 const ClaimChild_getters: ABIGetter[] = [
-    {"name":"lastClaimTime","arguments":[],"returnType":{"kind":"simple","type":"int","optional":false,"format":257}},
-    {"name":"parent","arguments":[],"returnType":{"kind":"simple","type":"address","optional":false}},
-    {"name":"master","arguments":[],"returnType":{"kind":"simple","type":"address","optional":false}},
-    {"name":"referrer","arguments":[],"returnType":{"kind":"simple","type":"address","optional":true}},
-    {"name":"interval","arguments":[],"returnType":{"kind":"simple","type":"int","optional":false,"format":257}},
-    {"name":"referralsCount","arguments":[],"returnType":{"kind":"simple","type":"int","optional":false,"format":257}},
-    {"name":"ban","arguments":[],"returnType":{"kind":"simple","type":"bool","optional":false}},
-    {"name":"get_state","arguments":[],"returnType":{"kind":"simple","type":"ChildState","optional":false}},
+    {"name":"get_child_data","arguments":[],"returnType":{"kind":"simple","type":"ChildData","optional":false}},
     {"name":"owner","arguments":[],"returnType":{"kind":"simple","type":"address","optional":false}},
 ]
 
 const ClaimChild_receivers: ABIReceiver[] = [
-    {"receiver":"internal","message":{"kind":"typed","type":"MintChildNoClaim"}},
-    {"receiver":"internal","message":{"kind":"typed","type":"MintChildWithClaim"}},
+    {"receiver":"internal","message":{"kind":"typed","type":"Mint"}},
     {"receiver":"internal","message":{"kind":"typed","type":"AddReferral"}},
     {"receiver":"internal","message":{"kind":"typed","type":"Boost"}},
     {"receiver":"internal","message":{"kind":"typed","type":"Web3Ban"}},
@@ -1366,12 +1378,12 @@ const ClaimChild_receivers: ABIReceiver[] = [
 
 export class ClaimChild implements Contract {
     
-    static async init(parent: Address, user: Address, master: Address, interval: bigint) {
-        return await ClaimChild_init(parent, user, master, interval);
+    static async init(master: Address, owner: Address) {
+        return await ClaimChild_init(master, owner);
     }
     
-    static async fromInit(parent: Address, user: Address, master: Address, interval: bigint) {
-        const init = await ClaimChild_init(parent, user, master, interval);
+    static async fromInit(master: Address, owner: Address) {
+        const init = await ClaimChild_init(master, owner);
         const address = contractAddress(0, init);
         return new ClaimChild(address, init);
     }
@@ -1394,14 +1406,11 @@ export class ClaimChild implements Contract {
         this.init = init;
     }
     
-    async send(provider: ContractProvider, via: Sender, args: { value: bigint, bounce?: boolean| null | undefined }, message: MintChildNoClaim | MintChildWithClaim | AddReferral | Boost | Web3Ban | null) {
+    async send(provider: ContractProvider, via: Sender, args: { value: bigint, bounce?: boolean| null | undefined }, message: Mint | AddReferral | Boost | Web3Ban | null) {
         
         let body: Cell | null = null;
-        if (message && typeof message === 'object' && !(message instanceof Slice) && message.$$type === 'MintChildNoClaim') {
-            body = beginCell().store(storeMintChildNoClaim(message)).endCell();
-        }
-        if (message && typeof message === 'object' && !(message instanceof Slice) && message.$$type === 'MintChildWithClaim') {
-            body = beginCell().store(storeMintChildWithClaim(message)).endCell();
+        if (message && typeof message === 'object' && !(message instanceof Slice) && message.$$type === 'Mint') {
+            body = beginCell().store(storeMint(message)).endCell();
         }
         if (message && typeof message === 'object' && !(message instanceof Slice) && message.$$type === 'AddReferral') {
             body = beginCell().store(storeAddReferral(message)).endCell();
@@ -1421,59 +1430,10 @@ export class ClaimChild implements Contract {
         
     }
     
-    async getLastClaimTime(provider: ContractProvider) {
+    async getGetChildData(provider: ContractProvider) {
         let builder = new TupleBuilder();
-        let source = (await provider.get('lastClaimTime', builder.build())).stack;
-        let result = source.readBigNumber();
-        return result;
-    }
-    
-    async getParent(provider: ContractProvider) {
-        let builder = new TupleBuilder();
-        let source = (await provider.get('parent', builder.build())).stack;
-        let result = source.readAddress();
-        return result;
-    }
-    
-    async getMaster(provider: ContractProvider) {
-        let builder = new TupleBuilder();
-        let source = (await provider.get('master', builder.build())).stack;
-        let result = source.readAddress();
-        return result;
-    }
-    
-    async getReferrer(provider: ContractProvider) {
-        let builder = new TupleBuilder();
-        let source = (await provider.get('referrer', builder.build())).stack;
-        let result = source.readAddressOpt();
-        return result;
-    }
-    
-    async getInterval(provider: ContractProvider) {
-        let builder = new TupleBuilder();
-        let source = (await provider.get('interval', builder.build())).stack;
-        let result = source.readBigNumber();
-        return result;
-    }
-    
-    async getReferralsCount(provider: ContractProvider) {
-        let builder = new TupleBuilder();
-        let source = (await provider.get('referralsCount', builder.build())).stack;
-        let result = source.readBigNumber();
-        return result;
-    }
-    
-    async getBan(provider: ContractProvider) {
-        let builder = new TupleBuilder();
-        let source = (await provider.get('ban', builder.build())).stack;
-        let result = source.readBoolean();
-        return result;
-    }
-    
-    async getGetState(provider: ContractProvider) {
-        let builder = new TupleBuilder();
-        let source = (await provider.get('get_state', builder.build())).stack;
-        const result = loadTupleChildState(source);
+        let source = (await provider.get('get_child_data', builder.build())).stack;
+        const result = loadTupleChildData(source);
         return result;
     }
     
