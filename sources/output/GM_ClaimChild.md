@@ -1,6 +1,6 @@
 # TACT Compilation Report
 Contract: ClaimChild
-BOC Size: 2008 bytes
+BOC Size: 2010 bytes
 
 # Types
 Total Types: 24

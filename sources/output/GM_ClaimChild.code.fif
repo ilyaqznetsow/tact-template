@@ -430,17 +430,19 @@ PROGRAM{
   $ClaimChild$_internal_binary_Mint PROCINLINE:<{
     s3 POP
     s5 POP
-    s6 POP
-    s6 POP
-    s6 POP
+    s7 POP
+    s7 POP
     __tact_context_get_sender INLINECALLDICT
-    s7 s(-1) PUXC
+    s8 s(-1) PUXC
     __tact_slice_eq_bits INLINECALLDICT
     666 THROWIFNOT
+    s0 s4 XCHG
+    0 GTINT
+    667 THROWIFNOT
     NOW
     0 PUSHINT
     s9 s(-1) s(-1) PUXCPU
-    s7 PUSH
+    s8 PUSH
     s0 s2 XCHG
     $Claim$_constructor_user_referrer_boost_amount INLINECALLDICT
     $Claim$_store_cell INLINECALLDICT
@@ -449,9 +451,7 @@ PROGRAM{
     64 PUSHINT
     $SendParameters$_constructor_to_body_value_mode INLINECALLDICT
     $global_send INLINECALLDICT
-    s5 s6 XCHG
     s5 s1 s4 XCHG3
-    s0 s2 XCHG
   }>
   $ClaimChild$_internal_binary_AddReferral PROCINLINE:<{
     2DROP

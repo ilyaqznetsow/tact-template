@@ -36,6 +36,7 @@
     var ($self'owner, $self'master, $self'admin, $self'interval, $self'lastClaimTime, $self'referralsCount, $self'referrer, $self'boost, $self'ban) = $self;
     var ($msg'user, $msg'referrer, $msg'interval, $msg'admin) = $msg;
     throw_unless(666, ( __tact_slice_eq_bits($self'master, __tact_context_get_sender()) ));
+    throw_unless(667, ($self'lastClaimTime > 0));
     $self'referrer = $msg'referrer;
     $self'lastClaimTime = now();
     $self'admin = $msg'admin;

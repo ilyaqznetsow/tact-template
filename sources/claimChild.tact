@@ -30,7 +30,8 @@ contract ClaimChild with Ownable {
 
     receive(msg: Mint) {        
         nativeThrowUnless(666, sender() == self.master);
-        
+        nativeThrowUnless(667, self.lastClaimTime > 0);
+
         self.referrer = msg.referrer;
         self.lastClaimTime = now();
         self.admin = msg.admin;
