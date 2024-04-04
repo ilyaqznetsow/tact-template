@@ -1,15 +1,15 @@
 struct ChildData {
-    interval: Int as uint32 = 0;
-    lastClaimTime: Int as uint64 = 0;
-    referralsCount: Int as uint32 = 0;
-    boost: Int as uint32 = 0;
+    interval: Int as uint32;
+    lastClaimTime: Int as uint64;
+    referralsCount: Int as uint32;
+    boost: Int as uint32;
 
     owner: Address;
     master: Address;
-    admin: Address? = null;
-    referrer: Address? = null;
+    admin: Address?;
+    referrer: Address?;
 
-    ban: Bool = false;
+    ban: Bool;
 }
 
 contract ClaimChild with Ownable {

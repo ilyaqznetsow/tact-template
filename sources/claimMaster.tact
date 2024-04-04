@@ -95,11 +95,11 @@ struct MasterData {
 
 contract ClaimMaster with Deployable {
     jettonWallet: Address? = null;
-    interval: Int as uint32 = 60*60*24;
+    interval: Int as uint32 = 60 * 60 * 24;
     minter: Address;
     admin: Address;
-    claimAmount: Int = 3_000_000_00;
-    referralReward: Int = 15_000_000_0;
+    claimAmount: Int = 300_000_000;
+    referralReward: Int = 150_000_000;
     boostReward: Int = 5_000_000;
 
     init(minter: Address, admin: Address) 
